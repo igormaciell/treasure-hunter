@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!28 &2800000
+Texture2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: tex_stone_dark
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 3
+  m_Width: 16
+  m_Height: 16
+  m_CompleteImageSize: 1024
+  m_MipsStripped: 0
+  m_TextureFormat: 4
+  m_MipCount: 1
+  m_IsReadable: 1
+  m_IsPreProcessed: 0
+  m_IgnoreMipmapLimit: 1
+  m_MipmapLimitGroupName: 
+  m_StreamingMipmaps: 0
+  m_StreamingMipmapsPriority: 0
+  m_VTOnly: 0
+  m_AlphaIsTransparency: 0
+  m_ImageCount: 1
+  m_TextureDimension: 2
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 0
+    m_WrapV: 0
+    m_WrapW: 0
+  m_LightmapFormat: 0
+  m_ColorSpace: 1
+  m_PlatformBlob: 
+  image data: 1024
+  _typelessdata: 292927ff2a2a28ff2a2a27ff272725ff272725ff272724ff262624ff2a2a28ff292926ff262624ff2b2b28ff2d2d2aff282825ff2b2b28ff282825ff252523ff272724ff54524fff575452ff4a4845ff514f4cff4e4c4aff557b35ff504d4bff2c2c29ff54514fff4c4a48ff565351ff4f4d4aff565351ff4c4a47ff504d4bff2b2b29ff585552ff3f5b27ff504e4bff504d4bff54514fff575552ff595654ff262624ff4b4846ff595653ff565350ff4d4a48ff514e4cff4f4c4aff4a4846ff282825ff54514eff54514fff4c4a47ff514e4cff514e4cff4d4b49ff52504dff2b2b28ff575451ff4a4745ff585552ff4d4b48ff4b4846ff54524fff53504eff262623ff252523ff272724ff272725ff2c2c29ff2b2b28ff272724ff2b2b28ff272724ff2b2b28ff2d2d2aff2b2b28ff2a2a27ff292926ff292926ff2c2c29ff4a4745ff555350ff4d4a48ff54514eff2d2d2aff514f4cff4d4a48ff504e4bff504e4bff4c4a47ff4f4c4aff4f4c4aff2b2b28ff4d4a48ff55524fff46662cff595653ff4a4845ff575451ff575451ff252523ff4c4a47ff4f4d4aff4f4c4aff52504dff4e4c49ff4e4c4aff4f4c4aff262623ff53514eff585653ff4f4c4aff4d4b49ff54514fff52504dff4c4a48ff252522ff524f4dff575451ff4d4a48ff52504dff514e4cff54524fff504d4bff292926ff514f4cff54514fff595654ff262623ff252523ff2a2a27ff2b2b28ff272725ff2c2c29ff252523ff2b2b28ff262623ff2b2b28ff262624ff282825ff2a2a28ff2a2a28ff2d2d2aff2a2a28ff2c2c2aff585653ff4a4846ff514f4cff54514fff585552ff53514eff595653ff252523ff4a4845ff514e4bff415e28ff4e4b49ff575452ff54524fff4f4c4aff272724ff524f4dff52504dff555350ff585653ff53514eff4b4846ff4a4846ff2c2c29ff4e4c49ff4b4947ff54514fff52504dff575552ff54514fff4d4b48ff2d2d2aff595653ff524f4dff53504eff4e4c49ff4f4c4aff4b4947ff575452ff2c2c29ff47662cff565451ff524f4dff514e4cff53504eff595654ff55524fff282825ff252523ff292926ff2a2a28ff282826ff2b2b29ff262624ff2b2b28ff252523ff2c2c29ff272725ff2c2c29ff252523ff282826ff2b2b29ff2a2a27ff4c4947ff565350ff575451ff4f4d4aff292926ff595654ff55524fff565350ff53504eff4b4846ff52504dff55524fff252523ff4e4b49ff4f4d4aff585552ff504e4bff4a4845ff4e4c49ff595653ff2c2c29ff54524fff4d4b48ff575452ff4a4846ff4b4947ff4e4c49ff4f4d4aff292927ff4b4946ff55524fff53504eff4b4846ff53514eff53504eff54524fff2c2c29ff4f4d4aff565350ff53504eff4d4a48ff4d4a48ff4d4b48ff4d4b48ff2b2b28ff4a4846ff4a4846ff595654ff
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 

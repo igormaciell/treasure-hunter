@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!28 &2800000
+Texture2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: tex_stone_brick
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 3
+  m_Width: 16
+  m_Height: 16
+  m_CompleteImageSize: 1024
+  m_MipsStripped: 0
+  m_TextureFormat: 4
+  m_MipCount: 1
+  m_IsReadable: 1
+  m_IsPreProcessed: 0
+  m_IgnoreMipmapLimit: 1
+  m_MipmapLimitGroupName: 
+  m_StreamingMipmaps: 0
+  m_StreamingMipmapsPriority: 0
+  m_VTOnly: 0
+  m_AlphaIsTransparency: 0
+  m_ImageCount: 1
+  m_TextureDimension: 2
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 0
+    m_WrapV: 0
+    m_WrapW: 0
+  m_LightmapFormat: 0
+  m_ColorSpace: 1
+  m_PlatformBlob: 
+  image data: 1024
+  _typelessdata: 45453dff414139ff41413aff3c3c35ff43433bff3c3c35ff3f3f37ff3e3e37ff45453dff44443cff404038ff44443cff42423bff48483fff46463eff484840ff404038ff707367ff415f29ff717367ff517532ff787b6eff547a34ff48692dff41413aff717367ff426029ff717467ff76786cff547934ff818476ff6b6e62ff42423aff75776bff75786bff75786bff717467ff6b6e62ff6f7165ff47682cff3e3e37ff787b6eff7e8173ff43612aff797c6fff808375ff507432ff43612aff3e3e37ff6e7165ff6a6d61ff76796cff777a6dff537934ff808375ff6b6e62ff404039ff415f29ff537833ff6a6c61ff6a6d61ff707266ff7c7f72ff76796cff404039ff45453dff47473fff3e3e36ff44443dff46463eff3d3d36ff42423bff3c3c35ff42423bff44443dff494940ff3c3c35ff3e3e37ff484840ff42423aff797c6eff7e8173ff7f8274ff6c6e63ff42423bff76786cff7c7e71ff818375ff7c7f72ff4e7131ff7c7e71ff76796cff404038ff787a6dff4d6f30ff7b7d70ff797b6eff4a6b2eff44632aff777a6dff44443cff6c6f63ff797c6eff6f7266ff7a7d70ff76796cff6e7064ff75776aff46463eff727568ff707366ff707366ff818476ff7b7e71ff7e8173ff45642bff45453dff76796cff737569ff6b6e62ff6e7064ff405d28ff7e8173ff6c6e63ff404039ff818375ff727468ff7a7c6fff3d3d36ff484840ff484840ff414139ff43433cff3d3d36ff484840ff48483fff3f3f38ff404039ff47473fff42423aff43433bff46463eff414139ff484840ff44443cff797c6fff6e7165ff44622aff737569ff7f8174ff6e7165ff7a7d70ff45453dff6a6c61ff787a6dff6a6c61ff808375ff707366ff7a7d70ff74766aff404038ff7f8274ff737569ff7a7c6fff75786bff7a7d70ff808375ff6f7165ff414139ff6a6c61ff6d6f63ff4a6c2eff7c7f71ff777a6dff7a7d6fff7f8274ff3f3f38ff7e8173ff7a7c6fff787a6dff7e8073ff6b6d61ff76796cff7e8173ff44443cff6c6f63ff7a7c6fff7d7f72ff717367ff7c7f71ff6d6f63ff7d7f72ff42423bff494940ff42423bff43433bff47473fff3e3e37ff46463eff494940ff48483fff44443cff46463eff3d3d36ff3e3e37ff484840ff3d3d36ff45453dff797c6fff6a6c61ff727568ff7f8274ff404039ff74776aff76796cff75776bff797b6eff44622aff7d8072ff7a7c6fff45453dff6b6d62ff6d6f63ff75786bff6d6f63ff7b7e71ff74776aff7f8274ff404038ff6a6d61ff6f7165ff7b7e70ff74776aff6d6f63ff74776aff7a7c6fff3c3c35ff6a6c61ff6f7165ff74776aff7d8072ff7d8073ff717367ff7c7f71ff3d3d36ff6f7165ff7b7d70ff6a6d61ff7b7d70ff808275ff787a6dff818375ff43433bff76796cff6e7064ff7c7e71ff
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
