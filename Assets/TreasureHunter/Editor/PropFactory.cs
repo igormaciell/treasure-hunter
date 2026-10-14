@@ -31,6 +31,7 @@ namespace TreasureHunter.EditorTools
             BuildLighting();
             BuildTraps();
             BuildMechanisms();
+            BuildExtras(Palette.CrystalBlue, MaterialFactory.Lit("mat_cobweb", null, new Color(0.86f, 0.86f, 0.82f), 0.3f), Palette.Rock);
         }
 
         /// <summary>

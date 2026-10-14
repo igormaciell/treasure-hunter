@@ -39,6 +39,7 @@ namespace TreasureHunter.EditorTools
             Progress("Nível 1: Sala 3 e Sala 4", 0.86f);
             BuildRoom3();
             BuildRoom4AndExit();
+            PlaceExtras();
 
             Group("Seguranca");
             GameObject kill = TriggerBox("ZonaDeQueda", new Vector3(0, Y0 - 25f, 20f), new Vector3(400f, 4f, 400f));
@@ -824,7 +825,7 @@ namespace TreasureHunter.EditorTools
             sb.AppendLine("- Instâncias de assets na cena: **" + all.Length + "**");
             sb.AppendLine("- Assets distintos (prefabs) usados: **" + all.Select(a => a.displayName).Distinct().Count() + "**");
             sb.AppendLine("- Categorias: **" + byCat.Count() + "**");
-            sb.AppendLine("- Prefabs gerados: " + (PropFactory.Prefabs.Count + ParticleFactory.Prefabs.Count + 1));
+            sb.AppendLine("- Prefabs gerados: " + AssetDatabase.FindAssets("t:Prefab", new[] { BuilderCore.PrefabsPath }).Length);
             sb.AppendLine("- Arquivos de áudio: " + Directory.GetFiles(BuilderCore.AudioPath, "*.wav").Length);
             sb.AppendLine();
             sb.AppendLine("| Categoria | Instâncias | Assets distintos |");
