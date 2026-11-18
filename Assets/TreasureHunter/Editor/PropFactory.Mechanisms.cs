@@ -129,7 +129,8 @@ namespace TreasureHunter.EditorTools
             }
             GameObject go = Begin("Tronco_Giratorio", log);
             Box(go, V(0, 0.5f, 0), V(6.6f, 0.45f, 0.45f));
-            Box(go, V(0, 0.65f, 0), V(0.9f, 1.3f, 0.9f));
+            // Colisor do eixo central levemente acima do piso, para não haver contato que atrapalhe o giro.
+            Box(go, V(0, 0.68f, 0), V(0.9f, 1.24f, 0.9f));
             Rigidbody rb = go.AddComponent<Rigidbody>();
             rb.mass = 800f;
             rb.useGravity = false;
@@ -147,6 +148,8 @@ namespace TreasureHunter.EditorTools
             whoosh.rolloffMode = AudioRolloffMode.Linear; whoosh.minDistance = 2f; whoosh.maxDistance = 16f;
             SpinningLogTrap trap = go.AddComponent<SpinningLogTrap>();
             trap.whooshSource = whoosh;
+            trap.spikes = spikes;
+            trap.lineOnStop = "O tronco parou e afundou no chão. Caminho livre!";
             Save(go, C, "Tronco giratório com espinhos");
 
             // Bloco do piso do templo que desaba na armadilha da introdução.
@@ -220,7 +223,8 @@ namespace TreasureHunter.EditorTools
             GameObject plate = Child(go, "Placa", V(0, 0.08f, 0), new VoxelModel()
                 .Add(V(0, 0.04f, 0), V(1.45f, 0.1f, 1.45f), Palette.TempleBrick)
                 .Add(V(0, 0.095f, 0), V(0.5f, 0.01f, 0.5f), Palette.Gold));
-            Box(go, V(0, 0.6f, 0), V(1.3f, 1f, 1.3f), true);
+            // Gatilho maior que a placa: acompanha o caixote que chega perto; o script confere se o centro está sobre ela.
+            Box(go, V(0, 0.6f, 0), V(2.6f, 1.2f, 2.6f), true);
             PressurePlate pp = go.AddComponent<PressurePlate>();
             pp.plateVisual = plate.transform;
             Light ind = AddLight(go, "Indicador", V(0, 0.6f, 0), new Color(0.4f, 1f, 0.6f), 3f, 1.5f);
@@ -245,7 +249,7 @@ namespace TreasureHunter.EditorTools
                 .Add(V(0, 1.03f, 0), V(0.85f, 0.06f, 0.65f), Palette.TempleBrick);
             go = Begin("Botao_de_Simbolo", buttonBase);
             Fit(go, buttonBase);
-            GameObject press = Child(go, "Face", V(0, 0.62f, 0.3f), new VoxelModel().Add(V(0, 0, 0), V(0.5f, 0.5f, 0.08f), Palette.Glyph[0]));
+            GameObject press = Child(go, "Face", V(0, 0.62f, 0.3f), new VoxelModel().AddFitted(V(0, 0, 0), V(0.62f, 0.62f, 0.08f), Palette.Glyph[0]));
             SymbolButton btn = go.AddComponent<SymbolButton>();
             btn.face = press.GetComponent<MeshRenderer>();
             btn.pressPart = press.transform;
@@ -335,9 +339,9 @@ namespace TreasureHunter.EditorTools
 
             // Moldura de símbolo para a parede (a face é revelada pela tocha).
             VoxelModel frame = new VoxelModel()
-                .Add(V(0, 0, -0.05f), V(1f, 1f, 0.1f), Palette.StoneDark);
+                .Add(V(0, 0, -0.05f), V(1.3f, 1.3f, 0.1f), Palette.StoneDark);
             go = Begin("Moldura_de_Simbolo", frame);
-            Child(go, "Face", V(0, 0, 0.03f), new VoxelModel().Add(V(0, 0, 0), V(0.78f, 0.78f, 0.04f), Palette.GlyphLit[0]));
+            Child(go, "Face", V(0, 0, 0.03f), new VoxelModel().AddFitted(V(0, 0, 0), V(1.1f, 1.1f, 0.04f), Palette.GlyphLit[0]));
             Save(go, AssetCategoryType.Inscricoes, "Moldura de símbolo");
         }
     }

@@ -14,6 +14,30 @@ namespace TreasureHunter.EditorTools
         public const string CobwebId = "Teia_de_Aranha";
 
         /// <summary>
+        /// Cria os prefabs usados no terreno da superfície (ponte de madeira sobre a ravina).
+        /// </summary>
+        public static void BuildTerrainExtras()
+        {
+            // Ponte de madeira sobre a ravina: tábuas ao longo do eixo X, postes e corrimãos de corda.
+            VoxelModel bridge = new VoxelModel().Add(V(0, -0.08f, 0), V(14f, 0.2f, 2.4f), Palette.Wood);
+            for (int i = 0; i < 8; i++)
+            {
+                float x = -7f + i * 2f;
+                bridge.Add(V(x, 0.03f, 0), V(0.12f, 0.04f, 2.42f), Palette.WoodDark)
+                      .Add(V(x, 0.5f, 1.2f), V(0.14f, 1.1f, 0.14f), Palette.WoodDark)
+                      .Add(V(x, 0.5f, -1.2f), V(0.14f, 1.1f, 0.14f), Palette.WoodDark);
+            }
+            bridge.Add(V(0, 0.95f, 1.2f), V(14f, 0.07f, 0.07f), Palette.Rope)
+                  .Add(V(0, 0.95f, -1.2f), V(14f, 0.07f, 0.07f), Palette.Rope);
+            GameObject go = Begin("Ponte_de_Madeira", bridge);
+            go.tag = GameTags.Ground;
+            Box(go, V(0, -0.08f, 0), V(14f, 0.2f, 2.4f));
+            Box(go, V(0, 0.55f, 1.2f), V(14f, 1.1f, 0.12f));
+            Box(go, V(0, 0.55f, -1.2f), V(14f, 1.1f, 0.12f));
+            Save(go, AssetCategoryType.Arquitetura, "Ponte de madeira");
+        }
+
+        /// <summary>
         /// Cria os dois prefabs extras e os registra no dicionário de prefabs.
         /// Recebe os materiais por parâmetro para funcionar tanto no gerador completo
         /// quanto no menu que apenas acrescenta esses assets a um projeto já gerado.

@@ -4,8 +4,10 @@ using UnityEngine;
 namespace TreasureHunter
 {
     /// <summary>
-    /// Placa de pressão no chão. Fica pressionada enquanto um objeto com a tag "Pushable"
-    /// (caixote) estiver sobre ela, enviando sinal aos mecanismos ligados.
+    /// Placa de pressão no chão. Só fica pressionada enquanto um objeto com a tag "Pushable"
+    /// (caixote) estiver REALMENTE em cima dela: o centro do caixote precisa estar sobre a placa,
+    /// não basta encostar na borda. Ao tirar o caixote, a placa sobe e os mecanismos ligados
+    /// (portas, energia do enigma) desligam de novo.
     /// O peso do jogador sozinho não é suficiente (opção acceptPlayer desligada por padrão).
     /// </summary>
     public class PressurePlate : MonoBehaviour
@@ -16,6 +18,8 @@ namespace TreasureHunter
         public SignalReceiver[] targets;
         /// <summary>Profundidade que a placa afunda.</summary>
         public float pressDepth = 0.08f;
+        /// <summary>Distância máxima (em X e em Z, metros) entre o centro do caixote e o centro da placa.</summary>
+        public float centerTolerance = 0.5f;
         /// <summary>Se verdadeiro, o jogador também ativa a placa.</summary>
         public bool acceptPlayer = false;
         /// <summary>Luz que acende quando pressionada (opcional).</summary>
@@ -28,7 +32,8 @@ namespace TreasureHunter
         /// <summary>Indica se a placa está pressionada.</summary>
         public bool IsPressed { get; private set; }
 
-        private readonly HashSet<Collider> objectsOnPlate = new HashSet<Collider>();
+        // Objetos aceitos que estão perto da placa (dentro do gatilho); o centro de cada um é conferido a cada passo.
+        private readonly HashSet<Collider> nearby = new HashSet<Collider>();
         private Vector3 visualStart;
         private bool firstPress = true;
 
@@ -42,39 +47,41 @@ namespace TreasureHunter
         }
 
         /// <summary>
-        /// Anima a placa afundando/subindo e remove da contagem objetos destruídos.
+        /// A cada passo de física confere se algum caixote está centralizado sobre a placa.
         /// </summary>
-        private void Update()
+        private void FixedUpdate()
         {
-            // Objetos destruídos não disparam OnTriggerExit; limpa-os aqui.
-            int removed = objectsOnPlate.RemoveWhere(c => c == null || !c.enabled);
-            if (removed > 0) Evaluate();
-
-            if (plateVisual != null)
-            {
-                Vector3 target = visualStart + Vector3.down * (IsPressed ? pressDepth : 0f);
-                plateVisual.localPosition = Vector3.MoveTowards(plateVisual.localPosition, target, Time.deltaTime * 0.5f);
-            }
+            // Objetos destruídos ou desligados não disparam OnTriggerExit; limpa-os aqui.
+            nearby.RemoveWhere(c => c == null || !c.enabled || !c.gameObject.activeInHierarchy);
+            SetPressed(AnyCentered());
         }
 
         /// <summary>
-        /// Verifica se o objeto que entrou pode pressionar a placa (pela Tag) e o registra.
+        /// Anima a placa afundando/subindo.
+        /// </summary>
+        private void Update()
+        {
+            if (plateVisual == null) return;
+            Vector3 target = visualStart + Vector3.down * (IsPressed ? pressDepth : 0f);
+            plateVisual.localPosition = Vector3.MoveTowards(plateVisual.localPosition, target, Time.deltaTime * 0.5f);
+        }
+
+        /// <summary>
+        /// Registra um objeto aceito (pela Tag) que chegou perto da placa.
         /// </summary>
         /// <param name="other">Colisor que entrou no gatilho.</param>
         private void OnTriggerEnter(Collider other)
         {
-            if (!Accepts(other)) return;
-            objectsOnPlate.Add(other);
-            Evaluate();
+            if (Accepts(other)) nearby.Add(other);
         }
 
         /// <summary>
-        /// Remove da contagem o objeto que saiu de cima da placa.
+        /// Esquece o objeto que se afastou da placa.
         /// </summary>
         /// <param name="other">Colisor que saiu do gatilho.</param>
         private void OnTriggerExit(Collider other)
         {
-            if (objectsOnPlate.Remove(other)) Evaluate();
+            nearby.Remove(other);
         }
 
         /// <summary>
@@ -89,11 +96,28 @@ namespace TreasureHunter
         }
 
         /// <summary>
-        /// Atualiza o estado pressionado e envia o sinal quando ele muda.
+        /// Verifica se algum objeto próximo tem o centro sobre a placa.
+        /// Usa uma pequena folga extra para soltar, evitando que a placa fique piscando na borda.
         /// </summary>
-        private void Evaluate()
+        /// <returns>true se algum objeto está centralizado sobre a placa.</returns>
+        private bool AnyCentered()
         {
-            bool pressed = objectsOnPlate.Count > 0;
+            float tolerance = IsPressed ? centerTolerance + 0.1f : centerTolerance;
+            foreach (Collider c in nearby)
+            {
+                // Posição do centro do objeto no espaço da placa (desconsiderando a altura).
+                Vector3 local = transform.InverseTransformPoint(c.bounds.center);
+                if (Mathf.Abs(local.x) <= tolerance && Mathf.Abs(local.z) <= tolerance) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Atualiza o estado pressionado e envia o sinal aos mecanismos quando ele muda.
+        /// </summary>
+        /// <param name="pressed">Novo estado.</param>
+        private void SetPressed(bool pressed)
+        {
             if (pressed == IsPressed) return;
             IsPressed = pressed;
 

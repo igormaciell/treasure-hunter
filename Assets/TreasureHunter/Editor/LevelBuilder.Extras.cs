@@ -79,7 +79,7 @@ namespace TreasureHunter.EditorTools
             Place(PropFactory.CrystalId, new Vector3(-10.2f, Y0, 7.15f), 30f);   // Sala 1 — nicho secreto
             Place(PropFactory.CrystalId, new Vector3(7.2f, Y0, 64.5f), -40f);   // Sala 3 — canto leste
             Place(PropFactory.CrystalId, new Vector3(-7.2f, Y0, 70.5f), 110f);  // Sala 3 — canto oeste
-            Place(PropFactory.CrystalId, new Vector3(-9.2f, Y0, 98.5f), 200f);  // Sala 4 — atrás da divisória
+            Place(PropFactory.CrystalId, new Vector3(-9.2f, Y0, 98.5f), 200f);  // Sala 4 — junto à divisória
 
             // Teias de Aranha (presas nas paredes, viradas para dentro das salas).
             Place(PropFactory.CobwebId, new Vector3(-5f, Y0 + 4.8f, 15.95f), 180f);  // Sala 1 — parede norte

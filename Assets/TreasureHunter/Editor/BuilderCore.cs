@@ -582,7 +582,7 @@ namespace TreasureHunter.EditorTools
     /// </summary>
     public class VoxelModel
     {
-        private struct Box { public Vector3 center; public Vector3 size; public Material mat; public Quaternion rot; }
+        private struct Box { public Vector3 center; public Vector3 size; public Material mat; public Quaternion rot; public bool fitUV; }
         private readonly List<Box> boxes = new List<Box>();
 
         /// <summary>
@@ -609,6 +609,20 @@ namespace TreasureHunter.EditorTools
         public VoxelModel Add(Vector3 center, Vector3 size, Material mat, Vector3 euler)
         {
             boxes.Add(new Box { center = center, size = size, mat = mat, rot = Quaternion.Euler(euler) });
+            return this;
+        }
+
+        /// <summary>
+        /// Adiciona uma caixa cuja textura é esticada para caber inteira em cada face (0 a 1),
+        /// em vez de repetir por metro. Usado nos símbolos dos enigmas, que precisam aparecer completos.
+        /// </summary>
+        /// <param name="center">Centro da caixa.</param>
+        /// <param name="size">Dimensões.</param>
+        /// <param name="mat">Material (com a imagem do símbolo).</param>
+        /// <returns>O próprio modelo.</returns>
+        public VoxelModel AddFitted(Vector3 center, Vector3 size, Material mat)
+        {
+            boxes.Add(new Box { center = center, size = size, mat = mat, rot = Quaternion.identity, fitUV = true });
             return this;
         }
 
@@ -697,8 +711,17 @@ namespace TreasureHunter.EditorTools
                     verts.Add(b.center + b.rot * corner);
                     normals.Add(b.rot * normal);
                     // Coordenadas de textura em metros, relativas ao canto da caixa.
-                    Vector3 local = corner + h;
-                    uvs.Add(new Vector2(Vector3.Dot(local, ua), Vector3.Dot(local, va)));
+                    if (b.fitUV)
+                    {
+                        // Imagem inteira na face: de 0 a 1 nos dois eixos. O U é invertido porque o eixo U da face
+                        // aponta para a esquerda de quem a observa; assim o símbolo não aparece espelhado.
+                        uvs.Add(new Vector2(0.5f - Vector3.Dot(corner - c, ua) / (2f * hu), Vector3.Dot(corner - c, va) / (2f * hv) + 0.5f));
+                    }
+                    else
+                    {
+                        Vector3 local = corner + h;
+                        uvs.Add(new Vector2(Vector3.Dot(local, ua), Vector3.Dot(local, va)));
+                    }
                 }
                 // Ordem horária vista de fora (convenção do Unity para a face visível).
                 tris.Add(start); tris.Add(start + 1); tris.Add(start + 2);

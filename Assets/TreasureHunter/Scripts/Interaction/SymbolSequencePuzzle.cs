@@ -158,8 +158,17 @@ namespace TreasureHunter
         /// <param name="on">Novo estado da energia.</param>
         protected override void OnStateChanged(bool on)
         {
-            if (on && GameManager.Instance != null && GameManager.Instance.ui != null)
-                GameManager.Instance.ui.ShowLine("Ouvi um clique perto da porta... o mecanismo dos símbolos ganhou vida.");
+            UIManager ui = GameManager.Instance != null ? GameManager.Instance.ui : null;
+            if (on && !Solved && ui != null)
+                ui.ShowLine("Ouvi um clique perto da porta... o mecanismo dos símbolos ganhou vida.");
+
+            // Sem energia (caixote saiu da placa), a sequência em andamento é perdida.
+            if (!on && !Solved && solution != null)
+            {
+                ResetProgress();
+                if (ui != null) ui.ShowLine("O mecanismo apagou... o caixote precisa ficar sobre a placa.");
+            }
+
             foreach (SymbolButton b in buttons)
             {
                 if (b != null) b.SetPoweredLight(on);

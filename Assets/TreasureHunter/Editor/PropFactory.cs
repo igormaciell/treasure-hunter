@@ -31,6 +31,7 @@ namespace TreasureHunter.EditorTools
             BuildLighting();
             BuildTraps();
             BuildMechanisms();
+            BuildTerrainExtras();
             BuildExtras(Palette.CrystalBlue, MaterialFactory.Lit("mat_cobweb", null, new Color(0.86f, 0.86f, 0.82f), 0.3f), Palette.Rock);
         }
 
@@ -112,6 +113,24 @@ namespace TreasureHunter.EditorTools
             c.center = center;
             c.size = size;
             c.isTrigger = trigger;
+            return c;
+        }
+
+        /// <summary>
+        /// Adiciona um CapsuleCollider vertical (formato aceito pelo Terrain para a colisão das árvores).
+        /// </summary>
+        /// <param name="go">Objeto.</param>
+        /// <param name="center">Centro local.</param>
+        /// <param name="radius">Raio.</param>
+        /// <param name="height">Altura total.</param>
+        /// <returns>O colisor.</returns>
+        private static CapsuleCollider Capsule(GameObject go, Vector3 center, float radius, float height)
+        {
+            CapsuleCollider c = go.AddComponent<CapsuleCollider>();
+            c.center = center;
+            c.radius = radius;
+            c.height = height;
+            c.direction = 1;
             return c;
         }
 
@@ -211,7 +230,7 @@ namespace TreasureHunter.EditorTools
                 .Add(V(0.4f, 0.15f, 0.4f), V(0.5f, 0.3f, 0.3f), Palette.Roots)
                 .Add(V(-0.45f, 0.12f, -0.2f), V(0.3f, 0.25f, 0.5f), Palette.Roots);
             GameObject go = Begin("Arvore_Carvalho", oak);
-            Box(go, V(0, 1.6f, 0), V(0.7f, 3.2f, 0.7f));
+            Capsule(go, V(0, 1.6f, 0), 0.35f, 3.2f);
             Save(go, C, "Árvore (carvalho)");
 
             VoxelModel pine = new VoxelModel()
@@ -221,7 +240,7 @@ namespace TreasureHunter.EditorTools
                 .Add(V(0, 4.2f, 0), V(1.4f, 0.9f, 1.4f), Palette.LeavesDark)
                 .Add(V(0, 5f, 0), V(0.7f, 0.8f, 0.7f), Palette.LeavesDark);
             go = Begin("Arvore_Pinheiro", pine);
-            Box(go, V(0, 1.4f, 0), V(0.5f, 2.8f, 0.5f));
+            Capsule(go, V(0, 1.4f, 0), 0.25f, 2.8f);
             Save(go, C, "Árvore (pinheiro)");
 
             VoxelModel jungle = new VoxelModel()
@@ -231,7 +250,7 @@ namespace TreasureHunter.EditorTools
                 .Add(V(0.8f, 3.2f, 0), V(0.9f, 0.25f, 0.25f), Palette.Bark)
                 .Add(V(1.3f, 3.5f, 0), V(0.8f, 0.6f, 0.8f), Palette.Leaves);
             go = Begin("Arvore_Tropical", jungle);
-            Box(go, V(0, 2.5f, 0), V(0.6f, 5f, 0.6f));
+            Capsule(go, V(0, 2.5f, 0), 0.3f, 5f);
             Save(go, C, "Árvore (tropical)");
 
             Simple("Arbusto", new VoxelModel()

@@ -149,30 +149,23 @@ namespace TreasureHunter.EditorTools
         // ================================================================== Superfície
 
         /// <summary>
-        /// Floresta, acampamento do explorador, escadaria, templo da superfície, armadilha do ídolo e poço da queda.
+        /// Superfície: terreno (Unity Terrain) com floresta, lago, ravina e montanhas, acampamento do explorador,
+        /// escadaria, templo, armadilha do ídolo e poço da queda.
         /// </summary>
         private static void BuildSurface()
         {
             Transform surface = Group("Superficie");
 
-            // Chão em quatro partes, deixando o buraco do poço sob a câmara do templo (x -5..5, z -16..-6).
-            Group("Chao", surface);
-            Block("Chao", new Vector3(-35, -1, -70), new Vector3(35, 0, -16), Palette.Grass);
-            Block("Chao", new Vector3(-35, -1, -6), new Vector3(35, 0, 0), Palette.Grass);
-            Block("Chao", new Vector3(-35, -1, -16), new Vector3(-5, 0, -6), Palette.Grass);
-            Block("Chao", new Vector3(5, -1, -16), new Vector3(35, 0, -6), Palette.Grass);
-            InvisibleWall(new Vector3(-36, -1, -71), new Vector3(-34, 12, 1));
-            InvisibleWall(new Vector3(34, -1, -71), new Vector3(36, 12, 1));
-            InvisibleWall(new Vector3(-36, -1, -71), new Vector3(36, 12, -69));
-            InvisibleWall(new Vector3(-36, -1, -1), new Vector3(36, 12, 1));
+            // Terreno feito com o Unity Terrain (passos da aula de terreno). Ele tem um buraco sobre o poço do templo.
+            Progress("Nível 1: terreno (alturas, texturas, grama e árvores)", 0.68f);
+            TerrainBuilder.Build(surface);
 
-            // Trilha de terra até a escadaria.
-            Group("Trilha", surface);
-            for (float z = -64f; z < -26f; z += 2f)
-            {
-                float off = Mathf.Sin(z * 0.25f) * 0.8f;
-                Block("Trilha", new Vector3(-1.6f + off, 0f, z), new Vector3(1.6f + off, 0.02f, z + 1.8f), Palette.Dirt, false);
-            }
+            // Limites da área jogável (as montanhas nas bordas fazem a moldura visual).
+            Group("Limites", surface);
+            InvisibleWall(new Vector3(-40, -10, -85), new Vector3(-38, 20, 2));
+            InvisibleWall(new Vector3(38, -10, -85), new Vector3(40, 20, 2));
+            InvisibleWall(new Vector3(-40, -10, -86), new Vector3(40, 20, -84));
+            InvisibleWall(new Vector3(-40, -10, 0), new Vector3(40, 20, 2));
 
             BuildForest(surface);
             BuildCamp(surface);
@@ -180,30 +173,79 @@ namespace TreasureHunter.EditorTools
         }
 
         /// <summary>
-        /// Espalha árvores, arbustos, flores e cogumelos pela floresta (posições sorteadas com semente fixa),
-        /// evitando a trilha, o acampamento e o templo.
+        /// Altura do terreno num ponto (atalho para posicionar objetos em cima dele).
+        /// </summary>
+        /// <param name="x">X do mundo.</param>
+        /// <param name="z">Z do mundo.</param>
+        /// <returns>Posição com Y na altura do terreno.</returns>
+        private static Vector3 OnGround(float x, float z)
+        {
+            return new Vector3(x, TerrainShape.Height(x, z), z);
+        }
+
+        /// <summary>
+        /// Enfeites da floresta sobre o terreno: algumas árvores voxel como objetos (as demais são árvores do Terrain),
+        /// arbustos, flores, cogumelos, pedras, troncos, ponte da ravina, margens do lago e tesouros escondidos.
         /// </summary>
         /// <param name="surface">Grupo pai.</param>
         private static void BuildForest(Transform surface)
         {
             Group("Floresta", surface);
             string[] trees = { "Arvore_Carvalho", "Arvore_Pinheiro", "Arvore_Tropical" };
-            ScatterSurface(trees, 46, 2.2f);
+            ScatterSurface(trees, 14, 2.2f);
             ScatterSurface(new[] { "Arbusto" }, 30, 1.2f);
-            ScatterSurface(new[] { "Capim" }, 40, 0.3f);
+            ScatterSurface(new[] { "Capim" }, 20, 0.3f);
             ScatterSurface(new[] { "Samambaia" }, 18, 0.5f);
             ScatterSurface(new[] { "Cogumelo_Vermelho", "Cogumelos_Marrons" }, 14, 0.3f);
             ScatterSurface(new[] { "Flor_Amarela", "Flor_Roxa" }, 18, 0.3f);
             ScatterSurface(new[] { "Musgo" }, 8, 0.8f);
             ScatterSurface(new[] { "Bloco_de_Pedra", "Entulho" }, 8, 1f);
-            Place("Tronco_Caido", new Vector3(-9f, 0, -44f), 70f);
-            Place("Tronco_Caido", new Vector3(10f, 0, -36f), -20f);
-            Place("Tronco_Caido", new Vector3(7f, 0, -55f), 15f);
+            Place("Tronco_Caido", OnGround(-6f, -40f), 70f);
+            Place("Tronco_Caido", OnGround(10f, -33f), -20f);
+            Place("Tronco_Caido", OnGround(8f, -55f), 15f);
             Place("FX_Leaves", new Vector3(0f, 9f, -38f));
+
+            // Margens do lago: pedras e musgo na beira da água.
+            Vector2 lake = TerrainShape.LakeCenter;
+            for (int i = 0; i < 7; i++)
+            {
+                float ang = i / 7f * Mathf.PI * 2f + 0.4f;
+                float x = lake.x + Mathf.Cos(ang) * TerrainShape.LakeRadiusX * 1.12f;
+                float z = lake.y + Mathf.Sin(ang) * TerrainShape.LakeRadiusZ * 1.12f;
+                Place(i % 2 == 0 ? "Bloco_de_Pedra" : "Musgo", OnGround(x, z), ang * Mathf.Rad2Deg, 0.8f);
+            }
+
+            // Ponte sobre a ravina e um pequeno mirante com tesouro do outro lado.
+            float bx = TerrainShape.RavineX(TerrainShape.BridgeZ);
+            Place("Ponte_de_Madeira", new Vector3(bx, 0f, TerrainShape.BridgeZ), 0f);
+            Place("Bau_de_Tesouro", OnGround(35.5f, TerrainShape.BridgeZ - 1.5f), -90f);
+            Place("Pilha_de_Ouro", OnGround(35.6f, TerrainShape.BridgeZ + 1.2f), 20f);
+            Place("Totem", OnGround(36.5f, TerrainShape.BridgeZ + 3.5f), -90f);
+
+            Treasures("Tesouros_Floresta", 4,
+                OnGround(-12.5f, -40f), OnGround(-30f, -52f), OnGround(34.5f, TerrainShape.BridgeZ), OnGround(-24f, -14f),
+                OnGround(15f, -70f), OnGround(-16f, -75f));
         }
 
         /// <summary>
-        /// Posiciona vários prefabs aleatoriamente na floresta, respeitando áreas proibidas.
+        /// Diz se um ponto está sobre a trilha principal, as trilhas secundárias ou a ponte.
+        /// </summary>
+        /// <param name="x">X do mundo.</param>
+        /// <param name="z">Z do mundo.</param>
+        /// <param name="margin">Folga em metros.</param>
+        /// <returns>true se o ponto atrapalharia a passagem.</returns>
+        private static bool OnPath(float x, float z, float margin)
+        {
+            Vector2 p = new Vector2(x, z);
+            float bx = TerrainShape.RavineX(TerrainShape.BridgeZ);
+            if (TerrainShape.SegmentDistance(p, new Vector2(0f, -50f), new Vector2(-11f, -47f)) < 1.6f + margin) return true;
+            if (TerrainShape.SegmentDistance(p, new Vector2(0f, -38f), new Vector2(bx + 8f, TerrainShape.BridgeZ)) < 1.6f + margin) return true;
+            return TerrainShape.RectDistance(x, z, bx - 8f, 38f, TerrainShape.BridgeZ - 2f, TerrainShape.BridgeZ + 2f) < margin;
+        }
+
+        /// <summary>
+        /// Posiciona vários prefabs aleatoriamente na floresta, em cima do terreno, respeitando áreas livres
+        /// (trilhas, acampamento, templo, lago, ravina e encostas íngremes).
         /// </summary>
         /// <param name="ids">Prefabs possíveis (sorteados).</param>
         /// <param name="count">Quantidade desejada.</param>
@@ -211,18 +253,20 @@ namespace TreasureHunter.EditorTools
         private static void ScatterSurface(string[] ids, int count, float radius)
         {
             int placed = 0, tries = 0;
-            while (placed < count && tries < count * 30)
+            while (placed < count && tries < count * 40)
             {
                 tries++;
-                float x = BuilderCore.Range(-33f, 33f);
-                float z = BuilderCore.Range(-68f, -2f);
-                // Áreas livres: trilha, acampamento, templo + escadaria.
-                if (Mathf.Abs(x) < 3.2f + radius && z < -24f) continue;
-                if (Mathf.Abs(x) < 7f + radius && z < -54f) continue;
-                if (Mathf.Abs(x) < 11f + radius && z > -30f) continue;
+                float x = BuilderCore.Range(-36f, 36f);
+                float z = BuilderCore.Range(-82f, -2f);
+                // Áreas livres: trilha, acampamento, templo + escadaria, trilhas secundárias, lago e ravina.
+                if (Mathf.Abs(x - TerrainShape.PathX(z)) < 3.2f + radius && z < -24f) continue;
+                if (Vector2.Distance(new Vector2(x, z), new Vector2(0f, -60f)) < 8f + radius) continue;
+                if (Mathf.Abs(x) < 11f + radius && z > -32f) continue;
+                if (OnPath(x, z, radius)) continue;
+                if (!TerrainShape.IsGoodGround(x, z, radius)) continue;
                 string id = ids[BuilderCore.Rng.Next(ids.Length)];
                 float scale = id.StartsWith("Arvore") ? BuilderCore.Range(0.85f, 1.35f) : BuilderCore.Range(0.8f, 1.2f);
-                Place(id, new Vector3(x, 0f, z), BuilderCore.Range(0f, 360f), scale);
+                Place(id, OnGround(x, z), BuilderCore.Range(0f, 360f), scale);
                 placed++;
             }
         }
@@ -520,10 +564,11 @@ namespace TreasureHunter.EditorTools
 
             RoomEntry(2, new Vector3(0, Y0 + 1.5f, 21.5f), new Vector3(0, Y0 + 0.05f, 23.5f), "Sala 2: Câmara do Peso",
                 "Leve o caixote até a placa de pressão para abrir a porta.",
-                "Ande contra o caixote para empurrá-lo. Ele desliza em linha reta e para quando você solta.",
+                "Empurre o caixote andando contra ele. A porta só fica aberta enquanto ele estiver bem em cima da placa.",
                 "Uma placa no chão... meu peso não basta. Preciso de algo mais pesado.");
 
             StoneDoor d2 = Door("Porta2", new Vector3(0, Y0, 40.5f));
+            d2.latch = false; // fecha de novo se o caixote sair da placa
             GameObject crate = Place("Caixote_Empurravel", new Vector3(-5f, Y0 + 0.02f, 27f));
             crate.GetComponent<PushableCrate>().roomIndex = 2;
             GameObject plate = Place("Placa_de_Pressao", new Vector3(3f, Y0, 35f));
@@ -700,7 +745,7 @@ namespace TreasureHunter.EditorTools
             mural.transform.position = new Vector3(0, Y0 + muralHeight, wallZ - 0.5f);
             currentParent = mural.transform;
             Renderer[] faces = new Renderer[4];
-            float[] mx = { -2.25f, -0.75f, 0.75f, 2.25f };
+            float[] mx = { -2.175f, -0.725f, 0.725f, 2.175f };
             for (int i = 0; i < 4; i++)
             {
                 GameObject f = Place("Moldura_de_Simbolo", new Vector3(mx[i], Y0 + muralHeight, wallZ - 0.02f), 180f);
@@ -721,8 +766,11 @@ namespace TreasureHunter.EditorTools
         // ================================================================== Sala 4 + saída
 
         /// <summary>
-        /// Sala 4 — Portão do Templo: alavanca solta o caixote do alçapão, caixote na placa energiza o mecanismo,
-        /// tronco giratório (torque) guarda a passagem e a sequência revelada pela tocha abre o portão (Combinação).
+        /// Sala 4 — Portão do Templo (Combinação). A sala é dividida por uma parede com uma passagem guardada por um
+        /// tronco com espinhos que gira sem parar (torque), a poucos metros do portão. Do outro lado do tronco fica a
+        /// alavanca: ao puxá-la, o tronco freia e afunda no chão e o alçapão solta o caixote. O caixote precisa ficar
+        /// sobre a placa para energizar o mecanismo de símbolos e manter o portão aberto; os braseiros (ou a tocha)
+        /// revelam a sequência no mural acima do portão.
         /// </summary>
         private static void BuildRoom4AndExit()
         {
@@ -731,55 +779,66 @@ namespace TreasureHunter.EditorTools
             Room("Estrutura", -10, 10, 82, 104, Y0, 8, Palette.StoneBrick, Palette.StoneFloor, Palette.StoneDark, null,
                 new Opening(Side.South, 0, 3, 3.5f), new Opening(Side.North, 0, 3, 3.5f));
             currentParent = r4;
-            Block("Divisoria", new Vector3(-10, Y0, 96), new Vector3(-3.6f, Y0 + 8, 97), Palette.StoneBrick);
-            Block("Divisoria", new Vector3(3.6f, Y0, 96), new Vector3(10, Y0 + 8, 97), Palette.StoneBrick);
+
+            // Parede divisória perto do portão, com uma passagem de 7,2 m no meio (onde gira o tronco).
+            Block("Divisoria", new Vector3(-10, Y0, 100), new Vector3(-3.6f, Y0 + 8, 101), Palette.StoneBrick);
+            Block("Divisoria", new Vector3(3.6f, Y0, 100), new Vector3(10, Y0 + 8, 101), Palette.StoneBrick);
 
             RoomEntry(4, new Vector3(0, Y0 + 1.5f, 82.5f), new Vector3(0, Y0 + 0.05f, 83.5f), "Sala 4: Portão do Templo",
-                "Use tudo o que aprendeu para abrir o grande portão.",
-                "Observe, empurre, ilumine e lembre: tudo será necessário aqui.",
-                "Um portão enorme... e um mecanismo cheio de peças.");
+                "Encontre um jeito de parar o tronco e abrir o grande portão.",
+                "Pule o tronco no momento certo. Do outro lado dele há uma alavanca.",
+                "Um tronco com espinhos guardando o portão... deve haver um jeito de pará-lo.");
 
+            // Portão: só abre com a sequência correta E com o caixote sobre a placa (2 sinais, sem trava).
             StoneDoor d4 = Door("Porta4", new Vector3(0, Y0, 104.5f));
+            d4.requiredSignals = 2;
+            d4.latch = false;
 
-            // Alçapão com o caixote e a alavanca que o solta.
+            // Tronco giratório na passagem da divisória, a 3,5 m do portão.
+            GameObject logGo = Place("Tronco_Giratorio", new Vector3(0f, Y0, 100.5f));
+            SpinningLogTrap log = logGo.GetComponent<SpinningLogTrap>();
+
+            // Alçapão com o caixote (lado sul) e a alavanca do outro lado do tronco (lado norte).
             GameObject hatch = Place("Plataforma_com_Alcapao", new Vector3(7f, Y0, 87f));
+            HatchRelease hr = hatch.GetComponent<HatchRelease>();
+            hr.lineOnOpen = "";
             GameObject crate = Place("Caixote_Empurravel", new Vector3(7f, Y0 + 3.5f, 87f));
             crate.GetComponent<PushableCrate>().roomIndex = 4;
-            GameObject lever = Place("Alavanca", new Vector3(-9.3f, Y0, 86f), 90f);
+            GameObject lever = Place("Alavanca", new Vector3(-7f, Y0, 103.2f), 180f);
             Lever l = lever.GetComponent<Lever>();
-            l.targets = new SignalReceiver[] { hatch.GetComponent<HatchRelease>() };
-            l.lineOnUse = "Algo se soltou do outro lado da sala!";
+            l.targets = new SignalReceiver[] { hr, log };
+            l.lineOnUse = "O tronco está parando! E ouvi algo se soltar do outro lado da sala.";
 
-            // Placa que energiza o mecanismo de símbolos.
-            SymbolSequencePuzzle puzzle = SymbolPuzzle("MecanismoDoPortao", 104f, 100f, 4.8f, d4,
+            // Mecanismo de símbolos (botões antes da passagem; mural acima do portão).
+            SymbolSequencePuzzle puzzle = SymbolPuzzle("MecanismoDoPortao", 104f, 95f, 4.8f, d4,
                 "Consegui! O portão está se abrindo... sinto ar fresco!", 1);
             puzzle.skillOnSolve = "";
+            puzzle.latch = false;
+
+            // Placa: energiza o mecanismo e segura o portão aberto enquanto o caixote estiver sobre ela.
             GameObject plate = Place("Placa_de_Pressao", new Vector3(0f, Y0, 90f));
             PressurePlate pp = plate.GetComponent<PressurePlate>();
-            pp.targets = new SignalReceiver[] { puzzle };
+            pp.targets = new SignalReceiver[] { puzzle, d4 };
 
             TorchRevealable reveal = puzzle.transform.Find("MuralDeSimbolos").GetComponent<TorchRevealable>();
-            Brazier b1 = Place("Braseiro", new Vector3(-6f, Y0, 101.5f)).GetComponent<Brazier>();
-            Brazier b2 = Place("Braseiro", new Vector3(6f, Y0, 101.5f)).GetComponent<Brazier>();
+            Brazier b1 = Place("Braseiro", new Vector3(-5.3f, Y0, 102.4f)).GetComponent<Brazier>();
+            Brazier b2 = Place("Braseiro", new Vector3(5.3f, Y0, 102.4f)).GetComponent<Brazier>();
             b1.targets = new SignalReceiver[] { reveal };
             b2.targets = new SignalReceiver[] { reveal };
-
-            // Tronco giratório na passagem da divisória.
-            Place("Tronco_Giratorio", new Vector3(0f, Y0, 96.5f));
 
             GameObject tablet = Place("Tabua_de_Habilidade", new Vector3(-4f, Y0, 84.5f), 180f);
             SkillTablet st = tablet.GetComponent<SkillTablet>();
             st.title = "Inscrição: Combinação";
-            st.text = "\"Quem chega ao portão já sabe tudo o que precisa. Una o que aprendeu: nenhuma habilidade basta sozinha.\"";
+            st.text = "\"Além do guardião que gira está a alavanca que o faz descansar. Depois, una o que aprendeu: peso, luz e memória.\"";
 
             Place("Tocha_de_Parede", new Vector3(-9.95f, Y0 + 2.6f, 90f), 90f);
             Place("Tocha_de_Parede", new Vector3(9.95f, Y0 + 2.6f, 92f), -90f);
-            Place("Tocha_de_Parede", new Vector3(-5f, Y0 + 2.6f, 95.95f), 180f);
-            Place("Tocha_de_Parede", new Vector3(5f, Y0 + 2.6f, 95.95f), 180f);
-            Place("Tocha_de_Parede", new Vector3(-9.95f, Y0 + 2.6f, 100f), 90f);
-            Place("Tocha_de_Parede", new Vector3(9.95f, Y0 + 2.6f, 100f), -90f);
-            Place("Estatua_Guardiao", new Vector3(-8.5f, Y0, 102.8f), 150f);
-            Place("Estatua_Guardiao", new Vector3(8.5f, Y0, 102.8f), -150f);
+            Place("Tocha_de_Parede", new Vector3(-6.5f, Y0 + 2.6f, 99.95f), 180f);
+            Place("Tocha_de_Parede", new Vector3(6.5f, Y0 + 2.6f, 99.95f), 180f);
+            Place("Tocha_de_Parede", new Vector3(-9.95f, Y0 + 2.6f, 102.5f), 90f);
+            Place("Tocha_de_Parede", new Vector3(9.95f, Y0 + 2.6f, 102.5f), -90f);
+            Place("Estatua_Guardiao", new Vector3(-8.6f, Y0, 102.9f), 150f);
+            Place("Estatua_Guardiao", new Vector3(8.6f, Y0, 102.9f), -150f);
             Place("Totem", new Vector3(-8.6f, Y0, 93.5f), 90f);
             Place("Totem", new Vector3(3.5f, Y0, 83f), 180f);
             Place("Bau_de_Tesouro", new Vector3(9f, Y0, 83.2f), -90f);
@@ -788,11 +847,11 @@ namespace TreasureHunter.EditorTools
             Place("Barril", new Vector3(-9.1f, Y0, 95f));
             Place("Entulho", new Vector3(-6f, Y0, 91f), 120f);
             Place("Raizes_Penduradas", new Vector3(-5f, Y0 + 8f, 88f));
-            Place("Raizes_Penduradas", new Vector3(5f, Y0 + 8f, 100f), 30f);
+            Place("Raizes_Penduradas", new Vector3(6.5f, Y0 + 8f, 102.5f), 30f);
             Place("Lanterna_Pendurada", new Vector3(0f, Y0 + 8f, 88f));
             Treasures("Tesouros_Sala4", 4,
-                new Vector3(-8f, Y0, 88f), new Vector3(-2f, Y0, 85f), new Vector3(4f, Y0, 93f), new Vector3(-6f, Y0, 99f),
-                new Vector3(8f, Y0, 98f), new Vector3(-3f, Y0, 102.5f), new Vector3(3f, Y0, 102.5f), new Vector3(9f, Y0, 89.5f));
+                new Vector3(-8f, Y0, 88f), new Vector3(-2f, Y0, 85f), new Vector3(4f, Y0, 93f), new Vector3(-6f, Y0, 98.5f),
+                new Vector3(8f, Y0, 98f), new Vector3(-2.8f, Y0, 103.3f), new Vector3(2.8f, Y0, 103.3f), new Vector3(9f, Y0, 89.5f));
 
             // ---------------------------------------------------------- Saída
             Transform exit = Group("Saida", under);
@@ -827,6 +886,18 @@ namespace TreasureHunter.EditorTools
             sb.AppendLine("- Categorias: **" + byCat.Count() + "**");
             sb.AppendLine("- Prefabs gerados: " + AssetDatabase.FindAssets("t:Prefab", new[] { BuilderCore.PrefabsPath }).Length);
             sb.AppendLine("- Arquivos de áudio: " + Directory.GetFiles(BuilderCore.AudioPath, "*.wav").Length);
+            Terrain[] terrains = Object.FindObjectsByType<Terrain>(FindObjectsSortMode.None);
+            if (terrains.Length > 0)
+            {
+                if (string.IsNullOrEmpty(TerrainBuilder.Report)) TerrainBuilder.RefreshReport();
+                TerrainData td = terrains[0].terrainData;
+                sb.AppendLine();
+                sb.AppendLine("## Terreno — assets usados");
+                sb.AppendLine();
+                sb.AppendLine("- Camadas de textura: " + td.terrainLayers.Length + " · tipos de grama/flores: " + td.detailPrototypes.Length +
+                              " · tipos de árvore: " + td.treePrototypes.Length + " · árvores plantadas no terreno: " + td.treeInstanceCount);
+                sb.Append(TerrainBuilder.Report);
+            }
             sb.AppendLine();
             sb.AppendLine("| Categoria | Instâncias | Assets distintos |");
             sb.AppendLine("|---|---|---|");

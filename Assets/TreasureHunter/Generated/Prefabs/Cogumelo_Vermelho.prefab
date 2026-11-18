@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5570000513837254281
+--- !u!1 &7932144571073654742
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,10 +8,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5337893060658744118}
-  - component: {fileID: 4043343844848953673}
-  - component: {fileID: 148129000930309638}
-  - component: {fileID: 9159898709269962835}
+  - component: {fileID: 5008644671368500108}
+  - component: {fileID: 6941905801503687816}
+  - component: {fileID: 2716357830637717703}
+  - component: {fileID: 5680529855047023384}
   m_Layer: 0
   m_Name: Cogumelo_Vermelho
   m_TagString: Untagged
@@ -19,13 +19,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5337893060658744118
+--- !u!4 &5008644671368500108
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5570000513837254281}
+  m_GameObject: {fileID: 7932144571073654742}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -34,21 +34,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &4043343844848953673
+--- !u!33 &6941905801503687816
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5570000513837254281}
+  m_GameObject: {fileID: 7932144571073654742}
   m_Mesh: {fileID: 4300000, guid: 0cd6abefd80ba084785e839b916cd9fc, type: 2}
---- !u!23 &148129000930309638
+--- !u!23 &2716357830637717703
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5570000513837254281}
+  m_GameObject: {fileID: 7932144571073654742}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -88,13 +88,13 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &9159898709269962835
+--- !u!114 &5680529855047023384
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5570000513837254281}
+  m_GameObject: {fileID: 7932144571073654742}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e5b65b8ae84f624586e09e944f226e7, type: 3}
