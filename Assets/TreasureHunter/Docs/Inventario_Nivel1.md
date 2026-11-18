@@ -10,11 +10,11 @@ Gerado automaticamente pelo menu *Treasure Hunter > Construir Nível 1*.
 
 ## Terreno — assets usados
 
-- Camadas de textura: 6 · tipos de grama/flores: 3 · tipos de árvore: 3 · árvores plantadas no terreno: 280
-- Textura base (ground do Nature Starter Kit 2): não encontrada — usada textura própria
+- Camadas de textura: 6 · tipos de grama/flores: 4 · tipos de árvore: 6 · árvores plantadas no terreno: 280
+- Textura base (ground do Nature Starter Kit 2): Assets/NatureStarterKit2/Textures/ground01.tga
 - Normal map da textura base: gerado pelo projeto
-- Grama/flores (Grass Flowers Pack Free): não encontradas — usadas texturas próprias
-- Árvores (Nature Starter Kit 2): não encontradas — usadas árvores voxel próprias
+- Grama/flores (Grass Flowers Pack Free): 4 texturas do pacote
+- Árvores (Nature Starter Kit 2): 6 prefabs do pacote
 
 | Categoria | Instâncias | Assets distintos |
 |---|---|---|

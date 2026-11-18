@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2591171038248844945
+--- !u!1 &4297567520665150294
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,9 +8,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5074079045388722480}
-  - component: {fileID: 1791452576366256028}
-  - component: {fileID: 9096823223272319504}
+  - component: {fileID: 9175383373442554028}
+  - component: {fileID: 511447540176883573}
+  - component: {fileID: 3093924325949700801}
   m_Layer: 0
   m_Name: Cabo
   m_TagString: Untagged
@@ -18,36 +18,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5074079045388722480
+--- !u!4 &9175383373442554028
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2591171038248844945}
+  m_GameObject: {fileID: 4297567520665150294}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.32, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6613624810812465160}
+  m_Father: {fileID: 9021125198793167962}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &1791452576366256028
+--- !u!33 &511447540176883573
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2591171038248844945}
+  m_GameObject: {fileID: 4297567520665150294}
   m_Mesh: {fileID: 4300000, guid: 1be3921a380f6e041a7c49a5256d2c55, type: 2}
---- !u!23 &9096823223272319504
+--- !u!23 &3093924325949700801
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2591171038248844945}
+  m_GameObject: {fileID: 4297567520665150294}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -87,7 +87,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &3220490841942616652
+--- !u!1 &7905016238619317983
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -95,12 +95,12 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6613624810812465160}
-  - component: {fileID: 3558752130780436319}
-  - component: {fileID: 3423233403758530300}
-  - component: {fileID: 7952642894776302568}
-  - component: {fileID: 5848387823054692810}
-  - component: {fileID: 2920904364542262857}
+  - component: {fileID: 9021125198793167962}
+  - component: {fileID: 5407892855828462070}
+  - component: {fileID: 1804853204256321938}
+  - component: {fileID: 1279431416775391071}
+  - component: {fileID: 4587048788452208151}
+  - component: {fileID: 8750397152648532580}
   m_Layer: 0
   m_Name: Alavanca
   m_TagString: Untagged
@@ -108,38 +108,38 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6613624810812465160
+--- !u!4 &9021125198793167962
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3220490841942616652}
+  m_GameObject: {fileID: 7905016238619317983}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5074079045388722480}
-  - {fileID: 9126953261147401549}
+  - {fileID: 9175383373442554028}
+  - {fileID: 3818363514639455438}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &3558752130780436319
+--- !u!33 &5407892855828462070
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3220490841942616652}
+  m_GameObject: {fileID: 7905016238619317983}
   m_Mesh: {fileID: 4300000, guid: 5e5ddf9d21f1bad439ef93300dd6b225, type: 2}
---- !u!23 &3423233403758530300
+--- !u!23 &1804853204256321938
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3220490841942616652}
+  m_GameObject: {fileID: 7905016238619317983}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -179,13 +179,13 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &7952642894776302568
+--- !u!65 &1279431416775391071
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3220490841942616652}
+  m_GameObject: {fileID: 7905016238619317983}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -200,13 +200,13 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.7, y: 1, z: 0.6}
   m_Center: {x: 0, y: 0.5, z: 0}
---- !u!114 &5848387823054692810
+--- !u!114 &4587048788452208151
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3220490841942616652}
+  m_GameObject: {fileID: 7905016238619317983}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 331abfd6afc3a524e9e86cfa14d81cdc, type: 3}
@@ -214,8 +214,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prompt: Puxar alavanca
   firstTimeTip: Alavancas acionam mecanismos antigos. Aproxime-se e pressione [E].
-  highlightLight: {fileID: 3014358211813892616}
-  handle: {fileID: 5074079045388722480}
+  highlightLight: {fileID: 9108291855757675170}
+  handle: {fileID: 9175383373442554028}
   targets: []
   offAngle: -40
   onAngle: 40
@@ -223,13 +223,13 @@ MonoBehaviour:
   oneShot: 1
   skillOnUse: 
   lineOnUse: 
---- !u!114 &2920904364542262857
+--- !u!114 &8750397152648532580
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3220490841942616652}
+  m_GameObject: {fileID: 7905016238619317983}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e5b65b8ae84f624586e09e944f226e7, type: 3}
@@ -237,7 +237,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: 4
   displayName: Alavanca
---- !u!1 &4300620718290128663
+--- !u!1 &8487962352654250786
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -245,8 +245,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 9126953261147401549}
-  - component: {fileID: 3014358211813892616}
+  - component: {fileID: 3818363514639455438}
+  - component: {fileID: 9108291855757675170}
   m_Layer: 0
   m_Name: Destaque
   m_TagString: Untagged
@@ -254,28 +254,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &9126953261147401549
+--- !u!4 &3818363514639455438
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4300620718290128663}
+  m_GameObject: {fileID: 8487962352654250786}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.2, z: 0.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6613624810812465160}
+  m_Father: {fileID: 9021125198793167962}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!108 &3014358211813892616
+--- !u!108 &9108291855757675170
 Light:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4300620718290128663}
+  m_GameObject: {fileID: 8487962352654250786}
   m_Enabled: 1
   serializedVersion: 11
   m_Type: 2
