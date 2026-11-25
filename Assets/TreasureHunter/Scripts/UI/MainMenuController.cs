@@ -5,7 +5,7 @@ using UnityEngine.UI;
 namespace TreasureHunter
 {
     /// <summary>
-    /// Menu principal: começa o Nível 1 (ou direto o Nível 2), mostra os controles e fecha o jogo.
+    /// Menu principal: começa o Nível 1 (ou direto o Nível 2 ou 3), mostra os controles e fecha o jogo.
     /// </summary>
     public class MainMenuController : MonoBehaviour
     {
@@ -16,6 +16,10 @@ namespace TreasureHunter
         public Button playButton;
         /// <summary>Botão que começa direto no Nível 2 (opcional).</summary>
         public Button level2Button;
+        /// <summary>Nome da cena do Nível 3 (botão "Nível 3").</summary>
+        public string level3Scene = "Level3";
+        /// <summary>Botão que começa direto no Nível 3 (opcional).</summary>
+        public Button level3Button;
         public Button controlsButton;
         public Button quitButton;
         public Button closeControlsButton;
@@ -34,6 +38,7 @@ namespace TreasureHunter
 
             if (playButton != null) playButton.onClick.AddListener(Play);
             if (level2Button != null) level2Button.onClick.AddListener(PlayLevel2);
+            if (level3Button != null) level3Button.onClick.AddListener(PlayLevel3);
             if (controlsButton != null) controlsButton.onClick.AddListener(() => ShowControls(true));
             if (closeControlsButton != null) closeControlsButton.onClick.AddListener(() => ShowControls(false));
             if (quitButton != null) quitButton.onClick.AddListener(Quit);
@@ -56,6 +61,15 @@ namespace TreasureHunter
         {
             Click();
             SceneManager.LoadScene(level2Scene);
+        }
+
+        /// <summary>
+        /// Carrega a cena do Nível 3.
+        /// </summary>
+        public void PlayLevel3()
+        {
+            Click();
+            SceneManager.LoadScene(level3Scene);
         }
 
         /// <summary>

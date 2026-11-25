@@ -15,14 +15,35 @@ namespace TreasureHunter.EditorTools
     /// </summary>
     public static class L2Core
     {
-        public const string Root = BuilderCore.Root + "/Generated_Nivel2";
-        public const string TexturesPath = Root + "/Textures";
-        public const string MaterialsPath = Root + "/Materials";
-        public const string MeshesPath = Root + "/Meshes";
-        public const string PrefabsPath = Root + "/Prefabs";
-        public const string AnimationsPath = Root + "/Animations";
-        public const string LightingPath = Root + "/Lighting";
-        public const string AudioPath = BuilderCore.AudioPath + "/Nivel2";
+        /// <summary>Pasta gerada do Nível 2 (padrão).</summary>
+        public const string Level2Root = BuilderCore.Root + "/Generated_Nivel2";
+        /// <summary>Pasta dos sons do Nível 2 (padrão).</summary>
+        public const string Level2Audio = BuilderCore.AudioPath + "/Nivel2";
+
+        /// <summary>
+        /// Pasta onde as funções desta classe gravam os assets. É a do Nível 2, a menos que outro gerador
+        /// (ex.: Nível 3) chame <see cref="UseFolders"/> para reaproveitar as mesmas ferramentas na sua própria pasta.
+        /// </summary>
+        public static string Root { get; private set; } = Level2Root;
+        public static string TexturesPath => Root + "/Textures";
+        public static string MaterialsPath => Root + "/Materials";
+        public static string MeshesPath => Root + "/Meshes";
+        public static string PrefabsPath => Root + "/Prefabs";
+        public static string AnimationsPath => Root + "/Animations";
+        public static string LightingPath => Root + "/Lighting";
+        /// <summary>Pasta dos sons procurados primeiro por <see cref="Clip"/>.</summary>
+        public static string AudioPath { get; private set; } = Level2Audio;
+
+        /// <summary>
+        /// Troca as pastas de trabalho (gerada e de sons). Sem argumentos, volta às do Nível 2.
+        /// </summary>
+        /// <param name="root">Pasta gerada (ex.: Assets/TreasureHunter/Generated_Nivel3).</param>
+        /// <param name="audio">Pasta dos sons do nível.</param>
+        public static void UseFolders(string root = Level2Root, string audio = Level2Audio)
+        {
+            Root = root;
+            AudioPath = audio;
+        }
         public const string Level2ScenePath = BuilderCore.ScenesPath + "/Level2.unity";
         public const string Level3ScenePath = BuilderCore.ScenesPath + "/Level3.unity";
 
@@ -78,13 +99,23 @@ namespace TreasureHunter.EditorTools
         /// </summary>
         public static void EnsureTagsAndLayers()
         {
+            EnsureTagsAndLayers(CombatTags.All, new[] { CombatLayers.EnemyLayerName, CombatLayers.ProjectileLayerName, CombatLayers.InteractableLayerName });
+        }
+
+        /// <summary>
+        /// Registra Tags e Layers no TagManager (as do Nível 1 sempre; as informadas, se ainda não existirem).
+        /// </summary>
+        /// <param name="extraTags">Tags a garantir.</param>
+        /// <param name="extraLayers">Layers a garantir (nos primeiros espaços livres a partir do 8).</param>
+        public static void EnsureTagsAndLayers(IEnumerable<string> extraTags, IEnumerable<string> extraLayers)
+        {
             BuilderCore.EnsureTags();
             UnityEngine.Object[] assets = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset");
             if (assets == null || assets.Length == 0) return;
             SerializedObject tagManager = new SerializedObject(assets[0]);
 
             SerializedProperty tags = tagManager.FindProperty("tags");
-            foreach (string tag in CombatTags.All)
+            foreach (string tag in extraTags)
             {
                 bool exists = false;
                 for (int i = 0; i < tags.arraySize; i++)
@@ -95,18 +126,21 @@ namespace TreasureHunter.EditorTools
             }
 
             SerializedProperty layers = tagManager.FindProperty("layers");
-            foreach (string layer in new[] { CombatLayers.EnemyLayerName, CombatLayers.ProjectileLayerName, CombatLayers.InteractableLayerName })
+            foreach (string layer in extraLayers)
             {
                 bool exists = false;
                 for (int i = 0; i < layers.arraySize; i++)
                     if (layers.GetArrayElementAtIndex(i).stringValue == layer) { exists = true; break; }
                 if (exists) continue;
                 // Camadas de usuário começam no índice 8.
+                bool placed = false;
                 for (int i = 8; i < layers.arraySize; i++)
                 {
                     SerializedProperty sp = layers.GetArrayElementAtIndex(i);
-                    if (string.IsNullOrEmpty(sp.stringValue)) { sp.stringValue = layer; break; }
+                    if (string.IsNullOrEmpty(sp.stringValue)) { sp.stringValue = layer; placed = true; break; }
                 }
+                if (!placed)
+                    Debug.LogWarning("[Treasure Hunter] Não há Layer livre para \"" + layer + "\". Liberem uma em Project Settings > Tags and Layers e gerem de novo.");
             }
             tagManager.ApplyModifiedProperties();
             AssetDatabase.SaveAssets();

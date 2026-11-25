@@ -54,7 +54,7 @@ namespace TreasureHunter.EditorTools
             if (!Build()) return;
             EditorUtility.DisplayDialog("Treasure Hunter",
                 "Nível 2 gerado com sucesso!\n\n" +
-                "Cenas: Level2 (catacumbas) e Level3 (provisória).\n" +
+                (Level3Builder.IsGenerated ? "Cena: Level2 (catacumbas); o Nível 3 já existente foi mantido.\n" : "Cenas: Level2 (catacumbas) e Level3 (provisória).\n") +
                 "O fim do Nível 1 agora tem o botão \"Próximo nível\" e o menu principal tem o botão \"Nível 2\".\n" +
                 "Inventário: Assets/TreasureHunter/Docs/Inventario_Nivel2.md\n\n" +
                 "Opcional: Treasure Hunter > Assar iluminação do Nível 2.", "OK");
@@ -107,6 +107,7 @@ namespace TreasureHunter.EditorTools
                 blockMeshes.Clear();
                 blockCounter = 0;
                 EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+                L2Core.UseFolders();
                 L2Core.PrepareFolders();
                 L2Core.EnsureTagsAndLayers();
                 L2Core.ConfigureAudioImport();
@@ -128,8 +129,9 @@ namespace TreasureHunter.EditorTools
                 Progress("Cena do Nível 2", 0.55f);
                 BuildScene();
 
+                // A tela provisória só é criada enquanto o Nível 3 de verdade não existe.
                 Progress("Cena provisória do Nível 3", 0.85f);
-                L2UI.BuildLevel3Placeholder();
+                if (!Level3Builder.IsGenerated) L2UI.BuildLevel3Placeholder();
                 EditorBuildSettings.scenes = LevelBuilder.BuildScenes();
 
                 Progress("Ligando o Nível 1 e o menu ao Nível 2", 0.92f);

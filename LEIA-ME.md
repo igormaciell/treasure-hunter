@@ -1,7 +1,8 @@
-# Treasure Hunter — Nível 1: A Entrada do Templo · Nível 2: As Catacumbas de Añang
+# Treasure Hunter — Nível 1: A Entrada do Templo · Nível 2: As Catacumbas de Añang · Nível 3: A Caverna de Cristal
 
 Projeto Unity das entregas do 1º e do 2º bimestre (Game Development — UVV 2026/2).
-**Novo: Nível 2 (combate)** — veja a seção [9. Nível 2](#9-nível-2--as-catacumbas-de-añang-combate).
+**Novo: Nível 3 (parkour + Totem de Checkpoint)** — veja a seção [10. Nível 3](#10-nível-3--a-caverna-de-cristal-parkour).
+Nível 2 (combate): seção [9](#9-nível-2--as-catacumbas-de-añang-combate).
 **Unity 6000.0.8f1 · template Universal 3D (URP) · 3ª pessoa · tema principal: Skills.**
 
 > Os scripts **não usam assets de terceiros**: todo o visual (estilo voxel/retrô do GDD), as animações e os sons
@@ -97,7 +98,7 @@ Outras novidades da superfície:
 | Tab | Diário de Habilidades |
 | Esc | pausa (Continuar · Reiniciar sala · **Reiniciar jogo** · Menu principal) |
 
-No Nível 2 a tocha dá lugar às armas (tabela completa na seção 9.2).
+No Nível 2 a tocha dá lugar às armas (tabela completa na seção 9.2). No Nível 3 entram a escalada de bordas e o totem (**T**, seção 10.2).
 
 ---
 
@@ -197,14 +198,15 @@ Lembrem também da OBS 2 do PDF: validar com o professor quais assets de terceir
 ```
 Assets/TreasureHunter/
 ├── Scripts/            (jogo: Core, Player, Interaction, Hazards, Collectibles, Effects, UI,
-│                        Combat e Enemies — estes dois são do Nível 2)
-├── Editor/             (gerador: menu "Treasure Hunter"; Editor/Nivel2 = gerador do Nível 2)
-├── Audio/              (28 sons do Nível 1) e Audio/Nivel2 (41 sons do Nível 2)
-├── Docs/               (mapas e inventários de assets dos dois níveis)
+│                        Combat e Enemies — Nível 2 —, Parkour — Nível 3)
+├── Editor/             (gerador: menu "Treasure Hunter"; Editor/Nivel2 e Editor/Nivel3 = geradores dos Níveis 2 e 3)
+├── Audio/              (28 sons do Nível 1), Audio/Nivel2 (41 sons) e Audio/Nivel3 (19 sons)
+├── Docs/               (mapas e inventários de assets dos níveis)
 ├── Generated/          (criado pelo gerador do Nível 1)
 ├── Generated_Nivel2/   (criado pelo gerador do Nível 2: texturas, mapas normais, materiais, malhas,
 │                        prefabs, animações, máscara de animação e configuração de iluminação)
-└── Scenes/             (MainMenu, Level1, Level2 e Level3 — esta é provisória)
+├── Generated_Nivel3/   (criado pelo gerador do Nível 3: o mesmo, mais o terreno da caverna e as camadas de terreno)
+└── Scenes/             (MainMenu, Level1, Level2, Level3 e Level4 — esta é provisória)
 ```
 
 ---
@@ -216,6 +218,9 @@ Assets/TreasureHunter/
 - **O menu "Treasure Hunter" não aparece:** existe algum erro de compilação no Console. Ele precisa ser resolvido primeiro.
 - **Nível 2: esqueletos parados ou aviso "Failed to create agent":** o NavMesh é gerado ao dar Play (objeto `Gerenciadores` → `NavMeshRuntimeBaker`). Confiram se o pacote *AI Navigation* está instalado (Window → Package Manager; vem no template).
 - **Nível 2: tiros atravessando inimigos, câmera batendo nos esqueletos:** faltam as Layers `Enemy`, `Projectile` e `Interactable`. Rodem o gerador do Nível 2 de novo (ele cria as Layers) e façam commit da pasta `ProjectSettings`.
+- **Nível 3: o totem fica sempre vermelho ou a câmera "pula" ao passar perto do totem:** falta a Layer `Totem` (ou a Tag `Unstable`). Rodem o gerador do Nível 3 de novo e façam commit da pasta `ProjectSettings`.
+- **Nível 3: terreno rosa ou sem textura:** o shader `Universal Render Pipeline/Terrain/Lit` não foi encontrado (projeto fora do URP). Com o template Universal 3D isso não acontece.
+- **Todas as camadas de Layers ocupadas:** o gerador avisa no Console se não houver espaço para `Totem`; liberem uma Layer sem uso em *Project Settings → Tags and Layers*.
 - Mandem o texto do erro do Console para corrigirmos.
 
 ---
@@ -243,7 +248,8 @@ O Nível 2 tem um gerador próprio. Ele **não regera nem altera os assets do N�
 Observações:
 
 - Rodar o gerador do Nível 2 de novo refaz só o que é do Nível 2. Edições feitas à mão na cena `Level2` ou em `Generated_Nivel2` se perdem.
-- Rodar **Construir Nível 1** de novo agora também regera o Nível 2 no final, porque os prefabs do Nível 2 reaproveitam efeitos, itens e o modelo de John do Nível 1.
+- Rodar **Construir Nível 1** de novo agora também regera os Níveis 2 e 3 no final, porque os prefabs deles reaproveitam efeitos, itens e o modelo de John do Nível 1.
+- Rodar **Construir Nível 2** não mexe mais no Nível 3: a tela provisória `Level3` só é criada enquanto o Nível 3 de verdade não existe.
 - **Iluminação assada (opcional):** **Treasure Hunter → Assar iluminação do Nível 2**. Leva alguns minutos; depois salvem a cena (Ctrl+S) e façam commit da pasta `Scenes/Level2` criada pelo Unity. Sem assar, o nível funciona normalmente: as luzes *Realtime* e *Mixed* já iluminam tudo. As luzes *Baked* e de *Área* só aparecem depois de assar.
 
 ### 9.2 Controles de combate
@@ -269,7 +275,7 @@ Tiro na **cabeça** causa o dobro de dano. Cada tiro faz barulho e acorda inimig
 | **Galeria dos Arqueiros (Sala 2)** | **3 arqueiros** mantêm distância (7 a 15 m), escolhem pontos de tiro com visão do jogador, tentam **flanquear** e trocam de posição quando John se esconde. As flechas fazem **curva** (gravidade) e se cravam nas paredes. Meias-paredes, pilares, altar e barricadas no meio da sala protegem **os dois lados**. A **Adaga Cerimonial** está no altar. | Cobertura |
 | **Corredor da lâmina** | Uma **lâmina pendular** (Rigidbody + HingeJoint + torque) varre o corredor. É preciso passar no tempo certo. | — |
 | **Salão do Guardião (Sala 3)** | **7 inimigos**: 3 esqueletos com faca que avançam, 2 arqueiros em **plataformas elevadas** e 2 **brutamontes** (machado, muita vida, olhos laranja) **dormindo junto à saída**: tiros os acordam. O jogador decide a ordem: eliminar as facas em silêncio (coronhada, faca, pedras, espinhos), derrubar os arqueiros e só então enfrentar os brutamontes. A **alavanca** perto da entrada derruba o **teto rachado** sobre o centro da sala. O **Amuleto de Osso** fica numa plataforma. | Improviso, Estratégia |
-| **Saída** | Vencer a Sala 3 abre a última grade. A tela final mostra inimigos derrotados, **disparos usados (x/25)**, precisão e se a faca foi encontrada, com os botões **Próximo nível**, **Reiniciar jogo** e **Menu principal**. O Nível 3 ainda é uma tela provisória. | — |
+| **Saída** | Vencer a Sala 3 abre a última grade. A tela final mostra inimigos derrotados, **disparos usados (x/25)**, precisão e se a faca foi encontrada, com os botões **Próximo nível** (vai para o Nível 3), **Reiniciar jogo** e **Menu principal**. | — |
 
 Ao morrer, **Voltar ao checkpoint** reinicia só a sala atual: inimigos, barris e armadilhas voltam, e o arsenal volta ao que John tinha ao entrar na sala. Assim, a conta das 25 balas nunca aumenta.
 
@@ -304,3 +310,113 @@ Ao morrer, **Voltar ao checkpoint** reinicia só a sala atual: inimigos, barris 
 | Luzes Point, Area, Baked e Mixed | Point: tochas, lanterna do cinto de John (com sombra), olhos dos esqueletos. Mixed: candelabros, lustres, braseiro, focos das fendas no teto. Area (Rectangle, Baked): `Fenda_de_Luz` e `LuzDeArea_*`. Baked: luzes de preenchimento das salas. `LightingSettings` próprio, sondas de luz (`LightProbeGroup`) e geometria com UV2 para lightmap |
 | UI com textos e botões; reiniciar | HUD de combate + missão, avisos, título da sala; botões **Reiniciar sala** e **Reiniciar jogo** (pausa), **Voltar ao checkpoint** (derrota), **Próximo nível / Reiniciar jogo / Menu principal** (fim do nível) |
 | **70+ assets distintos** | `Docs/Inventario_Nivel2.md`, gerado com a contagem real (passa de 100: arquitetura, props, iluminação, armadilhas, armas, inimigos, efeitos, interface…) |
+
+---
+
+## 10. Nível 3 — A Caverna de Cristal (parkour)
+
+Ao sair das catacumbas, John chega a uma caverna enorme, iluminada por cristais, com um abismo sem fundo no meio. Para atravessá-la ele precisa subir de plataforma em plataforma: rochas, pilares de cristal, estalagmites, uma estalactite caída, torres e muros de uma masmorra em ruínas.
+O nível apresenta o **parkour** (saltos precisos, controle no ar e escalada de bordas) e o **Totem de Checkpoint**: um totem que o jogador coloca onde quiser e que vira o ponto de retorno quando ele cai no abismo.
+
+### 10.1 Como gerar (uma pessoa só)
+
+O Nível 3 tem um gerador próprio. Ele **não regera nem altera os assets dos Níveis 1 e 2**: só cria a pasta `Generated_Nivel3` e as cenas novas.
+
+1. `git pull`. Extraiam o pacote `Atualizacao_Nivel3.zip` **por cima da pasta do projeto** (substituir arquivos) e abram o Unity.
+2. Esperem compilar (Console sem erros vermelhos).
+3. Rodem **Treasure Hunter → Construir Nível 3 (parkour)**. O Nível 1 precisa já ter sido gerado (no repositório ele já está). O gerador:
+   - cria as **Tags** `Unstable`, `Crystal`, `Checkpoint`, `Totem` e a **Layer** `Totem` (e `Interactable`, se ainda não existir);
+   - cria o **terreno** da caverna (Unity Terrain com o abismo aberto por *Terrain Holes*, 5 camadas de textura com **difusa + normal map**), texturas e materiais com normal maps, partículas, os prefabs, as animações de John, a cena `Level3` e a cena provisória `Level4`;
+   - acrescenta o botão **Nível 3** no menu principal (o fim do Nível 2 já leva ao Nível 3);
+   - coloca `Level3` e `Level4` no *Build Settings*;
+   - grava `Docs/Inventario_Nivel3.md` (contagem real de assets).
+4. Testem: abram `MainMenu`, cliquem em **Nível 3** e joguem (ou abram a cena `Level3` e deem Play).
+5. Commit e push de tudo: `Assets` (inclusive `Generated_Nivel3`, `Audio/Nivel3`, `Scenes`, `Docs`) **e `ProjectSettings`** (Tags, Layers e Build Settings). Os outros só dão `git pull`.
+
+Observações:
+
+- Rodar o gerador do Nível 3 de novo refaz só o que é do Nível 3. Edições feitas à mão na cena `Level3` ou em `Generated_Nivel3` se perdem.
+- **Iluminação assada (opcional):** **Treasure Hunter → Assar iluminação do Nível 3**. Depois salvem a cena (Ctrl+S) e façam commit da pasta `Scenes/Level3` criada pelo Unity. Sem assar, os cristais (luzes *Mixed* e *Realtime*) já iluminam a caverna; as luzes *Baked* e de *Área* só aparecem depois de assar.
+- O totem coletado fica salvo no computador (PlayerPrefs). Para testar do zero: **Treasure Hunter → Apagar progresso salvo (totem)**. No Nível 3 ele sempre precisa ser coletado de novo (é parte do percurso).
+
+### 10.2 Controles do parkour
+
+| Tecla | Ação |
+|---|---|
+| W A S D | mover; no ar também dá para corrigir a direção (controle aéreo) |
+| Shift | correr: necessário nos saltos longos (até ~6 m correndo, ~3 m andando) |
+| Espaço | pular (segurar = mais alto). Dá para pular um instante depois de sair da borda |
+| Pular contra uma borda alta | **agarrar e subir** sozinho (bordas de 0,6 m a 2,3 m acima dos pés) |
+| E | tocar o cristal especial, pegar o totem, ler inscrições |
+| **T (segurar)** | mostra onde o totem vai ficar: **verde = pode**, **vermelho = não pode** (o motivo aparece na tela) |
+| Soltar T | coloca o totem; se ele já estiver no chão, **muda de lugar** |
+| Botão direito (com T segurado) | cancela |
+
+Durante o salto, um **círculo no chão** mostra onde John vai pousar: verde em superfície firme, vermelho quando embaixo só há abismo ou parede.
+
+### 10.3 Roteiro (mapa em `Docs/Mapa_Nivel3.png`)
+
+| Trecho | O que acontece | Habilidade |
+|---|---|---|
+| **Entrada** | Arco da masmorra (de onde John vem), inscrição e um **muro de treino** de 2,2 m para aprender a agarrar a borda sem risco. À frente, a borda do abismo. | — |
+| **Trecho 1 — Primeiros Saltos** | 9 saltos curtos (1 a 1,75 m) subindo de 0 a 3 m: rochas, **pilares de cristal**, uma **caixa** em cima da plataforma, uma **torre** da masmorra (degrau de 1 m) e uma **plataforma móvel** para treinar o controle no ar. | — |
+| **Trecho 2 — Santuário do Totem** | Platô seguro com uma **pedra de checkpoint**. O **cristal dourado** (E) racha três vezes e se parte: os estilhaços voam e o **Totem de Checkpoint** fica livre para ser pego. Três pilares ao leste servem para treinar: tentem colocar o totem no ar, numa parede ou numa ponta de cristal para ver o aviso vermelho. | Saltos Precisos, Totem de Checkpoint |
+| **Trecho 3 — A Travessia** | **Sem checkpoints fixos**: o jogo pede para colocar o totem em S3a. Depois: escalar uma torre (2 m), **salto longo correndo** (3,7 m) até uma **plataforma frágil**, outra frágil, estalagmite, **disco giratório** (movido por torque), caixa como degrau, **ponte de estalactite** com **estalactites caindo** do teto e a **torre alta** (escalada). Segredo: **Olho de Cristal** num pilar afastado do disco (salto correndo de ~4 m). | Escalada de Bordas, Checkpoint Próprio, Equilíbrio |
+| **Trecho 4 — A Escalada Final** | Pilares finos (1,5 m) subindo, **cristal instável** (estilhaça logo depois do pouso), **muro da masmorra** (escalada obrigatória), **elevador de cristal** e o salto até a borda da saída. Segredo: **Lágrima de Cristal**, alcançada do alto do elevador. | — |
+| **Saída** | Portal de cristal → tela final com quedas, totens colocados, bordas escaladas e pousos, e o botão **Próximo nível** (Nível 4 provisório). | Mestre do Parkour |
+
+Cair no abismo não tira vida: a tela escurece e John volta ao **último checkpoint**, que pode ser o início, a pedra do santuário ou o totem (vale o mais recente). Plataformas frágeis voltam alguns segundos depois de cair.
+
+### 10.4 Totem de Checkpoint: regras de colocação
+
+A validação é feita com Raycast e CheckCapsule (`TotemAbility.Validate`). O totem **não** pode ser colocado:
+
+| Situação | Aviso na tela |
+|---|---|
+| Mirando o vazio (nenhuma superfície) | "Não dá para colocar o totem no ar." |
+| Superfície com mais de 30° de inclinação (parede) | "Isso é uma parede: o totem precisa de chão plano." |
+| Plataforma móvel, giratória, frágil ou instável (tag `Unstable`, `PlatformMotion`, `CrumblingPlatform`, Rigidbody dinâmico) | "Superfície instável: ela se move ou desmorona." |
+| A mais de 5 m (horizontal) ou 3 m (altura) de John | "Longe demais: aproxime-se do lugar." |
+| Base não apoiada por inteiro: 6 raios ao redor do ponto (borda, ponta de cristal, degrau) | "Chão irregular ou estreito demais." |
+| Sem espaço para uma pessoa em pé | "Sem espaço livre acima." |
+
+Também não dá para mirar o totem enquanto John está escalando uma borda. Colocar de novo **move** o mesmo totem (não cria outro). Ao cair, John reaparece ao lado dele.
+
+### 10.5 Como usar o totem no Nível 5
+
+O totem coletado fica salvo (`PlayerProgress.HasTotem`). No Nível 5, basta:
+
+1. colocar no John do nível o componente `TotemAbility` com **`loadSavedProgress = true`**, `totemPrefab = Totem_de_Checkpoint` e `ghostPrefab = Totem_Fantasma` (prefabs em `Generated_Nivel3/Prefabs`). O `ParkourController` é opcional (escalada de bordas);
+2. pôr na cena um `VoidZone` (ou chamar `VoidZone.Instance.Respawn()` onde o jogador puder cair) e o `ParkourHUD` (o `L3UI.BuildHUD` monta o painel do totem);
+3. pronto: o `GameManager` já usa o totem como checkpoint (`SetCheckpoint`).
+
+### 10.6 Requisitos do Nível 3 → onde estão
+
+| Requisito | Implementação (arquivo → função) |
+|---|---|
+| Sala única enorme com paredes naturais | `Level3Builder.BuildCave` + `L3Terrain` (Unity Terrain 90 × 180 m, paredes subindo até o teto), paredões, teto, colunas naturais |
+| Cristais com luz própria e partículas | `L3Props.CrystalPrefab`: luz Point (Mixed) + `FX3_Brilho_de_Cristal` + `CrystalGlow` (emissão pulsando via `MaterialPropertyBlock`; pisca e toca ao pousar) |
+| Estalactites, estalagmites, plataformas e formações naturais | `Estalactite_P/M/G`, `Estalagmite_P/M/G`, `Estalactite_Caida` (ponte), `Estalagmite_Plataforma`, `Plataforma_Rochosa_P/M/G/Longa`, `Formacao_Colunar`, `Arco_Natural`, `Coluna_Natural` |
+| Estruturas de masmorra (torres, caixas, paredes) | `Torre_da_Masmorra`, `Torre_Alta`, `Muro_da_Masmorra`, `Caixa_da_Masmorra`, `Caixa_Grande`, `Torre_Arruinada`, `Muro_Arruinado`, `Arco_da_Masmorra`… |
+| Abismos profundos e Void | Buraco no terreno (`TerrainData.SetHoles`), `VoidZone` (gatilho 140 × 240 m em y ≈ −32) + altura de segurança em `ParkourController.killHeight`; `FX3_Nevoa_do_Abismo` |
+| Terreno e materiais com difusa + normal map | `L3Terrain.Layer` (5 `TerrainLayer` com `diffuseTexture` + `normalMapTexture`), `L3Palette` (materiais com `_BumpMap`) |
+| Saltos, pouso, queda e movimento aéreo | `PlayerController` (inalterado: pulo, *coyote time*, *jump buffer*, `airControl = 0.6`) + `ParkourController` (altura da queda, pouso normal/forte, queda no abismo) |
+| Superfícies válidas de pouso | `LandingIndicator` (Raycast para baixo, verde/vermelho), `ParkourController.ProbeGround` (SphereCast) |
+| Escalada de bordas | `ParkourController.TryLedgeGrab`: Raycast na parede em 3 alturas + Raycast do topo + `CheckCapsule` → `StartMantle` |
+| Cristais, estalactites, paredes, caixas e torres como apoio | Todos os prefabs do percurso têm colisor de topo e bordas escaláveis |
+| Totem: quebrar o cristal, coletar, colocar, validar, feedback, reposicionar, reaparecer | `TotemCrystal` (Translate tremendo, estilhaços com AddForce/AddTorque) → `TotemPickup` → `TotemAbility` (fantasma verde/vermelho, texto `[OK]`/`[X]`, sons) → `CheckpointTotem` → `VoidZone.Respawn` → `GameManager.RespawnPlayer` |
+| Percurso em 4 trechos | `Level3Builder.BuildSection1/2/3/4` + `SectionTrigger` (títulos, missão, dicas e habilidades) |
+| Collider / Rigidbody | Plataformas (cinemáticas), disco (Rigidbody com torque), plataformas frágeis (caem com AddForce/AddTorque), estilhaços, estalactites (`FallingRock`) |
+| Translate / AddForce | Translate: tremor do cristal e das plataformas frágeis, totem subindo do chão. AddForce: estilhaços, queda das plataformas, impulso herdado da plataforma móvel ao pular |
+| Rotação / Torque | `SpinningPlatform` (`AddTorque`), `CheckpointTotem` (cristal girando), `Spinner` dos cristais flutuantes, estilhaços (`AddTorque`) |
+| Raycast em superfícies | Validação do totem, escalada, indicador de pouso, detecção do abismo |
+| Vetores de prefabs + escolha aleatória | `TotemCrystal.shardPrefabs` (`Lasca_de_Cristal_A/B/C`), `RockSpawner.rockPrefabs` (`Estalactite_Cadente_P/M/G`), `CollectibleSpawner.prefabs` |
+| Spawn por funções | `TotemAbility.SpawnTotem()`, `TotemCrystal.SpawnShards()`, `RockSpawner`, `ParkourUtil.SpawnAll()`, `CollectibleSpawner` |
+| Tags e Layers | Tags `Unstable`, `Crystal`, `Checkpoint`, `Totem`; Layer `Totem`; máscaras `ParkourLayers.SurfaceMask` (validação) e `CameraMask` (câmera) |
+| Partículas: brilho, quebra, poeira/pedrinhas, queda/fumaça | `FX3_Brilho_de_Cristal`, `FX3_Estilhacos_de_Cristal`, `FX3_Poeira_de_Pouso`, `FX3_Pedrinhas`, `FX3_Fumaca_de_Queda` e mais 8 (`FX3_Nevoa_do_Abismo`, `FX3_Esporos`, `FX3_Gotas`, `FX3_Rachadura`, `FX3_Desmoronamento`, `FX3_Ativacao_do_Totem`, `FX3_Reaparecimento`, `FX3_Coleta_do_Totem`) |
+| Sons de pulo, pouso, quebra e totem | `jump` (Nível 1), `land_soft`, `land_hard`, `crystal_break`, `totem_pickup`, `totem_place`, `totem_invalid`, `totem_respawn` e mais 12 em `Audio/Nivel3` (inclusive ambiente e música em loop), todos sintetizados para o projeto |
+| Animações | `John_Craft_Parkour.controller`: `John3_Parado`, `Andando`, `Correndo`, `Pulando`, `Caindo`, `Aterrissando`, `Aterrissagem_Forte`, `Escalando`, `Empurrando`, `Dano`, `Colocando_Totem` |
+| Luzes Point, Area, Baked e Mixed | Point: cristais, tochas, lanterna de cristal no cinto de John (com sombra). Mixed: `Cristal_Grande`, `Lampiao_da_Masmorra`, `Braseiro_de_Cristal`, cristais suspensos. Area (Rectangle, Baked): `LuzDeArea_*`. Baked: `Preenchimento_*`. `LightingSettings` próprio e sondas de luz |
+| UI com textos e botões; reiniciar | `ParkourHUD` (totem, aviso de colocação, checkpoint atual, quedas, alerta de queda, dicas) + pausa com **Reiniciar sala** / **Reiniciar jogo**, tela final com **Próximo nível / Reiniciar / Menu** |
+| Progressão para o Nível 4 e totem no Nível 5 | `ParkourLevelExit` → `GameManager.LoadNextLevel` (cena `Level4`); `PlayerProgress` + `TotemAbility.loadSavedProgress` (seção 10.5) |
+| **70+ assets distintos** | `Docs/Inventario_Nivel3.md`, gerado com a contagem real (≈ 90 prefabs feitos para o Nível 3, fora texturas, normal maps, materiais, camadas de terreno, animações e sons) |

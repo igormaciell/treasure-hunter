@@ -52,6 +52,7 @@ namespace TreasureHunter.EditorTools
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
             bool rebuildLevel2 = System.IO.File.Exists(L2Core.Level2ScenePath);
+            bool rebuildLevel3 = Level3Builder.IsGenerated;
             try
             {
                 Progress("Preparando pastas e tags", 0.02f);
@@ -93,6 +94,12 @@ namespace TreasureHunter.EditorTools
                     Level2Builder.Build();
                     EditorSceneManager.OpenScene(Level1ScenePath);
                 }
+                // O mesmo vale para o Nível 3 (John, moedas, joias e alguns efeitos vêm do Nível 1).
+                if (rebuildLevel3)
+                {
+                    Level3Builder.Build();
+                    EditorSceneManager.OpenScene(Level1ScenePath);
+                }
             }
             finally
             {
@@ -105,7 +112,7 @@ namespace TreasureHunter.EditorTools
         }
 
         /// <summary>
-        /// Lista de cenas do build: menu e Nível 1, mais os Níveis 2 e 3 se já tiverem sido gerados
+        /// Lista de cenas do build: menu e Nível 1, mais os Níveis 2, 3 e 4 se já tiverem sido gerados
         /// (regenerar o Nível 1 não remove os outros níveis do build).
         /// </summary>
         /// <returns>Cenas do build, na ordem.</returns>
@@ -116,7 +123,7 @@ namespace TreasureHunter.EditorTools
                 new EditorBuildSettingsScene(MainMenuScenePath, true),
                 new EditorBuildSettingsScene(Level1ScenePath, true)
             };
-            foreach (string extra in new[] { BuilderCore.ScenesPath + "/Level2.unity", BuilderCore.ScenesPath + "/Level3.unity" })
+            foreach (string extra in new[] { BuilderCore.ScenesPath + "/Level2.unity", BuilderCore.ScenesPath + "/Level3.unity", BuilderCore.ScenesPath + "/Level4.unity" })
                 if (System.IO.File.Exists(extra)) list.Add(new EditorBuildSettingsScene(extra, true));
             return list.ToArray();
         }
