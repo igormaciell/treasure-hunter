@@ -123,7 +123,7 @@ namespace TreasureHunter.EditorTools
                 new EditorBuildSettingsScene(MainMenuScenePath, true),
                 new EditorBuildSettingsScene(Level1ScenePath, true)
             };
-            foreach (string extra in new[] { BuilderCore.ScenesPath + "/Level2.unity", BuilderCore.ScenesPath + "/Level3.unity", BuilderCore.ScenesPath + "/Level4.unity" })
+            foreach (string extra in new[] { BuilderCore.ScenesPath + "/Level2.unity", BuilderCore.ScenesPath + "/Level3.unity", BuilderCore.ScenesPath + "/Level4.unity", BuilderCore.ScenesPath + "/Level5.unity" })
                 if (System.IO.File.Exists(extra)) list.Add(new EditorBuildSettingsScene(extra, true));
             return list.ToArray();
         }

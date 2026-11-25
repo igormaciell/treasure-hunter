@@ -20,6 +20,10 @@ namespace TreasureHunter
         public string level3Scene = "Level3";
         /// <summary>Botão que começa direto no Nível 3 (opcional).</summary>
         public Button level3Button;
+        /// <summary>Cena do Nível 4 (furtividade).</summary>
+        public string level4Scene = "Level4";
+        /// <summary>Botão que abre o Nível 4.</summary>
+        public Button level4Button;
         public Button controlsButton;
         public Button quitButton;
         public Button closeControlsButton;
@@ -39,6 +43,7 @@ namespace TreasureHunter
             if (playButton != null) playButton.onClick.AddListener(Play);
             if (level2Button != null) level2Button.onClick.AddListener(PlayLevel2);
             if (level3Button != null) level3Button.onClick.AddListener(PlayLevel3);
+            if (level4Button != null) level4Button.onClick.AddListener(PlayLevel4);
             if (controlsButton != null) controlsButton.onClick.AddListener(() => ShowControls(true));
             if (closeControlsButton != null) closeControlsButton.onClick.AddListener(() => ShowControls(false));
             if (quitButton != null) quitButton.onClick.AddListener(Quit);
@@ -70,6 +75,15 @@ namespace TreasureHunter
         {
             Click();
             SceneManager.LoadScene(level3Scene);
+        }
+
+        /// <summary>
+        /// Abre o Nível 4 (furtividade) diretamente.
+        /// </summary>
+        public void PlayLevel4()
+        {
+            Click();
+            SceneManager.LoadScene(level4Scene);
         }
 
         /// <summary>

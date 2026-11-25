@@ -27,6 +27,8 @@ namespace TreasureHunter
         public float agentClimb = 0.45f;
         /// <summary>Inclinação máxima (rampas das plataformas).</summary>
         public float agentSlope = 40f;
+        /// <summary>Camadas consideradas na geração (o Nível 4 exclui gatilhos e interativos).</summary>
+        public LayerMask includeLayers = ~0;
 
         private NavMeshDataInstance instance;
 
@@ -46,7 +48,7 @@ namespace TreasureHunter
             if (instance.valid) instance.Remove();
             Transform root = geometryRoot != null ? geometryRoot : transform;
             List<NavMeshBuildSource> sources = new List<NavMeshBuildSource>();
-            NavMeshBuilder.CollectSources(root, ~0, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>(), sources);
+            NavMeshBuilder.CollectSources(root, includeLayers, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>(), sources);
 
             NavMeshBuildSettings settings = NavMesh.GetSettingsByID(0);
             settings.agentRadius = agentRadius;

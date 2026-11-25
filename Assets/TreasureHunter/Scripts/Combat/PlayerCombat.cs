@@ -380,7 +380,8 @@ namespace TreasureHunter
             if (au != null) CombatAudio.Play(au.revolverShot, origin, 1f, 0.05f);
             if (ThirdPersonCamera.Instance != null) ThirdPersonCamera.Instance.Shake(0.12f, 0.05f);
             if (animator != null) animator.SetTrigger(ShootHash);
-            EnemyBase.MakeNoise(transform.position, noiseRadius);
+            // O disparo é o ruído mais forte do jogo: esqueletos acordam e ogros descobrem na hora de onde veio.
+            NoiseSystem.Emit(transform.position, noiseRadius, NoiseType.Gunshot, gameObject);
             Fired?.Invoke();
 
             if (Cylinder == 0)
@@ -456,8 +457,8 @@ namespace TreasureHunter
             float skip = Mathf.Max(0f, Vector3.Dot(transform.position + Vector3.up * 1.3f - ray.origin, ray.direction));
             if (!Physics.Raycast(ray.origin + ray.direction * skip, ray.direction, out RaycastHit hit, maxRange, CombatLayers.AimMask, QueryTriggerInteraction.Ignore))
                 return false;
-            EnemyBase e = hit.collider.GetComponentInParent<EnemyBase>();
-            return e != null && e.IsAlive;
+            IDamageable e = hit.collider.GetComponentInParent<IDamageable>();
+            return e != null && e.IsAlive && e.Team == Team.Enemy;
         }
 
         /// <summary>

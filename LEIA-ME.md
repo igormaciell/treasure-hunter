@@ -1,8 +1,8 @@
-# Treasure Hunter — Nível 1: A Entrada do Templo · Nível 2: As Catacumbas de Añang · Nível 3: A Caverna de Cristal
+# Treasure Hunter — Nível 1: A Entrada do Templo · Nível 2: As Catacumbas de Añang · Nível 3: A Caverna de Cristal · Nível 4: As Galerias dos Ogros
 
 Projeto Unity das entregas do 1º e do 2º bimestre (Game Development — UVV 2026/2).
-**Novo: Nível 3 (parkour + Totem de Checkpoint)** — veja a seção [10. Nível 3](#10-nível-3--a-caverna-de-cristal-parkour).
-Nível 2 (combate): seção [9](#9-nível-2--as-catacumbas-de-añang-combate).
+**Novo: Nível 4 (furtividade + ogros)** — veja a seção [11. Nível 4](#11-nível-4--as-galerias-dos-ogros-furtividade).
+Nível 3 (parkour): seção [10](#10-nível-3--a-caverna-de-cristal-parkour) · Nível 2 (combate): seção [9](#9-nível-2--as-catacumbas-de-añang-combate).
 **Unity 6000.0.8f1 · template Universal 3D (URP) · 3ª pessoa · tema principal: Skills.**
 
 > Os scripts **não usam assets de terceiros**: todo o visual (estilo voxel/retrô do GDD), as animações e os sons
@@ -98,7 +98,7 @@ Outras novidades da superfície:
 | Tab | Diário de Habilidades |
 | Esc | pausa (Continuar · Reiniciar sala · **Reiniciar jogo** · Menu principal) |
 
-No Nível 2 a tocha dá lugar às armas (tabela completa na seção 9.2). No Nível 3 entram a escalada de bordas e o totem (**T**, seção 10.2).
+No Nível 2 a tocha dá lugar às armas (tabela completa na seção 9.2). No Nível 3 entram a escalada de bordas e o totem (**T**, seção 10.2). No Nível 4, agachar (**C** ou **Ctrl**), a tocha na mão esquerda (**F**) e as pedras de distração (**G**) (seção 11.2).
 
 ---
 
@@ -198,15 +198,16 @@ Lembrem também da OBS 2 do PDF: validar com o professor quais assets de terceir
 ```
 Assets/TreasureHunter/
 ├── Scripts/            (jogo: Core, Player, Interaction, Hazards, Collectibles, Effects, UI,
-│                        Combat e Enemies — Nível 2 —, Parkour — Nível 3)
-├── Editor/             (gerador: menu "Treasure Hunter"; Editor/Nivel2 e Editor/Nivel3 = geradores dos Níveis 2 e 3)
-├── Audio/              (28 sons do Nível 1), Audio/Nivel2 (41 sons) e Audio/Nivel3 (19 sons)
+│                        Combat e Enemies — Nível 2 —, Parkour — Nível 3 —, Stealth — Nível 4)
+├── Editor/             (gerador: menu "Treasure Hunter"; Editor/Nivel2, Nivel3 e Nivel4 = geradores dos Níveis 2, 3 e 4)
+├── Audio/              (28 sons do Nível 1), Audio/Nivel2 (41 sons), Audio/Nivel3 (19 sons) e Audio/Nivel4 (31 sons)
 ├── Docs/               (mapas e inventários de assets dos níveis)
 ├── Generated/          (criado pelo gerador do Nível 1)
 ├── Generated_Nivel2/   (criado pelo gerador do Nível 2: texturas, mapas normais, materiais, malhas,
 │                        prefabs, animações, máscara de animação e configuração de iluminação)
 ├── Generated_Nivel3/   (criado pelo gerador do Nível 3: o mesmo, mais o terreno da caverna e as camadas de terreno)
-└── Scenes/             (MainMenu, Level1, Level2, Level3 e Level4 — esta é provisória)
+├── Generated_Nivel4/   (criado pelo gerador do Nível 4: texturas, normal maps, materiais, prefabs, ogros, animações, ícones)
+└── Scenes/             (MainMenu, Level1, Level2, Level3, Level4 e Level5 — esta é provisória)
 ```
 
 ---
@@ -220,6 +221,7 @@ Assets/TreasureHunter/
 - **Nível 2: tiros atravessando inimigos, câmera batendo nos esqueletos:** faltam as Layers `Enemy`, `Projectile` e `Interactable`. Rodem o gerador do Nível 2 de novo (ele cria as Layers) e façam commit da pasta `ProjectSettings`.
 - **Nível 3: o totem fica sempre vermelho ou a câmera "pula" ao passar perto do totem:** falta a Layer `Totem` (ou a Tag `Unstable`). Rodem o gerador do Nível 3 de novo e façam commit da pasta `ProjectSettings`.
 - **Nível 3: terreno rosa ou sem textura:** o shader `Universal Render Pipeline/Terrain/Lit` não foi encontrado (projeto fora do URP). Com o template Universal 3D isso não acontece.
+- **Nível 4:** veja a seção [11.7](#117-se-algo-der-errado-nível-4).
 - **Todas as camadas de Layers ocupadas:** o gerador avisa no Console se não houver espaço para `Totem`; liberem uma Layer sem uso em *Project Settings → Tags and Layers*.
 - Mandem o texto do erro do Console para corrigirmos.
 
@@ -248,7 +250,8 @@ O Nível 2 tem um gerador próprio. Ele **não regera nem altera os assets do N�
 Observações:
 
 - Rodar o gerador do Nível 2 de novo refaz só o que é do Nível 2. Edições feitas à mão na cena `Level2` ou em `Generated_Nivel2` se perdem.
-- Rodar **Construir Nível 1** de novo agora também regera os Níveis 2 e 3 no final, porque os prefabs deles reaproveitam efeitos, itens e o modelo de John do Nível 1.
+- Rodar **Construir Nível 1** de novo agora também regera os Níveis 2, 3 e 4 no final, porque os prefabs deles reaproveitam efeitos, itens e o modelo de John do Nível 1.
+- Rodar **Construir Nível 2** regera também o Nível 4 (se já existir), porque o John do Nível 4 é feito a partir do John armado do Nível 2.
 - Rodar **Construir Nível 2** não mexe mais no Nível 3: a tela provisória `Level3` só é criada enquanto o Nível 3 de verdade não existe.
 - **Iluminação assada (opcional):** **Treasure Hunter → Assar iluminação do Nível 2**. Leva alguns minutos; depois salvem a cena (Ctrl+S) e façam commit da pasta `Scenes/Level2` criada pelo Unity. Sem assar, o nível funciona normalmente: as luzes *Realtime* e *Mixed* já iluminam tudo. As luzes *Baked* e de *Área* só aparecem depois de assar.
 
@@ -326,7 +329,7 @@ O Nível 3 tem um gerador próprio. Ele **não regera nem altera os assets dos N
 2. Esperem compilar (Console sem erros vermelhos).
 3. Rodem **Treasure Hunter → Construir Nível 3 (parkour)**. O Nível 1 precisa já ter sido gerado (no repositório ele já está). O gerador:
    - cria as **Tags** `Unstable`, `Crystal`, `Checkpoint`, `Totem` e a **Layer** `Totem` (e `Interactable`, se ainda não existir);
-   - cria o **terreno** da caverna (Unity Terrain com o abismo aberto por *Terrain Holes*, 5 camadas de textura com **difusa + normal map**), texturas e materiais com normal maps, partículas, os prefabs, as animações de John, a cena `Level3` e a cena provisória `Level4`;
+   - cria o **terreno** da caverna (Unity Terrain com o abismo aberto por *Terrain Holes*, 5 camadas de textura com **difusa + normal map**), texturas e materiais com normal maps, partículas, os prefabs, as animações de John, a cena `Level3` e a cena provisória `Level4` (só enquanto o Nível 4 de verdade não existe);
    - acrescenta o botão **Nível 3** no menu principal (o fim do Nível 2 já leva ao Nível 3);
    - coloca `Level3` e `Level4` no *Build Settings*;
    - grava `Docs/Inventario_Nivel3.md` (contagem real de assets).
@@ -363,7 +366,7 @@ Durante o salto, um **círculo no chão** mostra onde John vai pousar: verde em 
 | **Trecho 2 — Santuário do Totem** | Platô seguro com uma **pedra de checkpoint**. O **cristal dourado** (E) racha três vezes e se parte: os estilhaços voam e o **Totem de Checkpoint** fica livre para ser pego. Três pilares ao leste servem para treinar: tentem colocar o totem no ar, numa parede ou numa ponta de cristal para ver o aviso vermelho. | Saltos Precisos, Totem de Checkpoint |
 | **Trecho 3 — A Travessia** | **Sem checkpoints fixos**: o jogo pede para colocar o totem em S3a. Depois: escalar uma torre (2 m), **salto longo correndo** (3,7 m) até uma **plataforma frágil**, outra frágil, estalagmite, **disco giratório** (movido por torque), caixa como degrau, **ponte de estalactite** com **estalactites caindo** do teto e a **torre alta** (escalada). Segredo: **Olho de Cristal** num pilar afastado do disco (salto correndo de ~4 m). | Escalada de Bordas, Checkpoint Próprio, Equilíbrio |
 | **Trecho 4 — A Escalada Final** | Pilares finos (1,5 m) subindo, **cristal instável** (estilhaça logo depois do pouso), **muro da masmorra** (escalada obrigatória), **elevador de cristal** e o salto até a borda da saída. Segredo: **Lágrima de Cristal**, alcançada do alto do elevador. | — |
-| **Saída** | Portal de cristal → tela final com quedas, totens colocados, bordas escaladas e pousos, e o botão **Próximo nível** (Nível 4 provisório). | Mestre do Parkour |
+| **Saída** | Portal de cristal → tela final com quedas, totens colocados, bordas escaladas e pousos, e o botão **Próximo nível** (Nível 4). | Mestre do Parkour |
 
 Cair no abismo não tira vida: a tela escurece e John volta ao **último checkpoint**, que pode ser o início, a pedra do santuário ou o totem (vale o mais recente). Plataformas frágeis voltam alguns segundos depois de cair.
 
@@ -420,3 +423,164 @@ O totem coletado fica salvo (`PlayerProgress.HasTotem`). No Nível 5, basta:
 | UI com textos e botões; reiniciar | `ParkourHUD` (totem, aviso de colocação, checkpoint atual, quedas, alerta de queda, dicas) + pausa com **Reiniciar sala** / **Reiniciar jogo**, tela final com **Próximo nível / Reiniciar / Menu** |
 | Progressão para o Nível 4 e totem no Nível 5 | `ParkourLevelExit` → `GameManager.LoadNextLevel` (cena `Level4`); `PlayerProgress` + `TotemAbility.loadSavedProgress` (seção 10.5) |
 | **70+ assets distintos** | `Docs/Inventario_Nivel3.md`, gerado com a contagem real (≈ 90 prefabs feitos para o Nível 3, fora texturas, normal maps, materiais, camadas de terreno, animações e sons) |
+
+---
+
+## 11. Nível 4 — As Galerias dos Ogros (furtividade)
+
+Saindo da caverna de cristal, John desce por uma corda até galerias naturais escuras: paredes de rocha, túneis estreitos, cogumelos, raízes, escombros e restos de uma antiga mina. Lá embaixo vivem **três ogros enormes**. Um golpe de ogro mata, e as poucas balas do revólver só fazem um ogro **cambalear**.
+O nível apresenta a **furtividade**: agachar, ficar nas sombras, controlar o barulho, observar as patrulhas e escolher o momento de cruzar. Lutar não é uma opção.
+
+### 11.1 Como gerar (uma pessoa só)
+
+O Nível 4 tem um gerador próprio. Ele **não regera nem altera os assets dos Níveis 1, 2 e 3**: só cria a pasta `Generated_Nivel4` e as cenas novas.
+
+1. `git pull`. Extraiam o pacote `Atualizacao_Nivel4.zip` **por cima da pasta do projeto** (substituir arquivos) e abram o Unity.
+2. Esperem compilar (Console sem erros vermelhos).
+3. Rodem **Treasure Hunter → Construir Nível 4 (furtividade)**. Os **Níveis 1 e 2 precisam já ter sido gerados** (no repositório eles já estão): John, o revólver e as pedras do Nível 4 vêm do John armado do Nível 2. O gerador:
+   - cria as **Tags** `Ogre`, `Cover`, `HidingSpot`, `SafeZone` (e as de combate e as Layers `Enemy`, `Projectile`, `Interactable`, se ainda não existirem);
+   - cria texturas com **mapas normais**, materiais, 18 partículas, os prefabs (rochas, escombros, caixas, mina, acampamento, vegetação, luzes), os **3 ogros** com animações e o *Animator Controller*, o John furtivo (agachado e golpeado), a cena `Level4` e a cena provisória `Level5`;
+   - acrescenta o botão **Nível 4** no menu principal (o fim do Nível 3 já leva ao Nível 4);
+   - coloca `Level4` e `Level5` no *Build Settings*;
+   - grava `Docs/Inventario_Nivel4.md` (contagem real de assets).
+4. Testem: abram `MainMenu`, cliquem em **Nível 4** e joguem (ou abram a cena `Level4` e deem Play).
+5. Commit e push de tudo: `Assets` (inclusive `Generated_Nivel4`, `Audio/Nivel4`, `Scenes`, `Docs`) **e `ProjectSettings`** (Tags, Layers e Build Settings). Os outros só dão `git pull`.
+
+Observações:
+
+- Rodar o gerador do Nível 4 de novo refaz só o que é do Nível 4. Edições feitas à mão na cena `Level4` ou em `Generated_Nivel4` se perdem.
+- Rodar **Construir Nível 2** (ou o Nível 1, que regera o 2) agora regera também o Nível 4 no final, se ele já existir: o John do Nível 4 é feito a partir do John do Nível 2.
+- Rodar **Construir Nível 3** não mexe mais no Nível 4: a tela provisória `Level4` só é criada enquanto o Nível 4 de verdade não existe. O mesmo vale para a `Level5` provisória.
+- **Iluminação assada (opcional):** **Treasure Hunter → Assar iluminação do Nível 4 (opcional)**. Depois salvem a cena (Ctrl+S) e façam commit da pasta `Scenes/Level4` criada pelo Unity. Sem assar, o nível funciona: tochas, braseiros, fogueira e fungos (*Realtime* e *Mixed*) já iluminam as galerias. As luzes *Baked* e de *Área* (fendas de luz no teto) só aparecem depois de assar.
+- O NavMesh é gerado ao dar Play (`Gerenciadores` → `NavMeshRuntimeBaker`) com o tamanho dos ogros (raio 0,65 m, altura 3 m). Por isso as fendas baixas, os nichos e a fenda estreita ficam fora do NavMesh e **os ogros não entram neles**.
+
+### 11.2 Controles da furtividade
+
+| Tecla | Ação |
+|---|---|
+| **C** | agachar / levantar (alterna) |
+| **Ctrl esquerdo (segurar)** | agachado enquanto estiver segurando |
+| Shift ou Espaço (agachado) | levanta (se houver espaço acima). Agachado não dá para correr nem pular |
+| **F** | acender / apagar a tocha da mão esquerda (começa apagada) |
+| E | pegar pedras, **apagar tochas e braseiros dos ogros**, ler inscrições |
+| **G** | arremessar pedra (distração: o ogro vai investigar o ponto do impacto) |
+| Clique esquerdo / botão direito / R | atirar / mirar / recarregar (revólver com **6 balas no nível inteiro**) |
+| V | coronhada (num ogro, só o irrita) |
+| Tab · Esc | Diário de Habilidades · pausa |
+
+O HUD da furtividade mostra:
+
+- o **olho** de visibilidade: SEGURO, ESCONDIDO, NAS SOMBRAS, VISÍVEL ou ILUMINADO;
+- a postura, o estado da tocha e o **medidor de ruído** do último som de John;
+- a lista dos ogros com o estado de cada um;
+- **setas** em volta do centro da tela apontando para os ogros alertas (até 30 m);
+- uma vinheta e o **batimento cardíaco**, que aceleram quando um ogro está desconfiado ou perseguindo.
+
+Sobre cada ogro aparece uma **barra de percepção**, um **"?" amarelo** (desconfiado) ou um **"!" vermelho** (viu John).
+
+### 11.3 Regras da furtividade
+
+**Visão dos ogros** (`VisionSensor`):
+
+- Cone com ângulo e distância próprios de cada ogro. O centro do cone (30°) vê melhor que a visão periférica.
+- Raycasts (cabeça, peito e quadril de John) contra o cenário: rochas, caixas e paredes **bloqueiam a visão**. Atrás de uma rocha baixa, só quem está agachado some.
+- A percepção não é instantânea: uma barra enche conforme a **visibilidade** de John (luz × postura × movimento × esconderijo), a distância e o quanto do corpo está à mostra.
+- 30% da barra = **desconfiado**; 100% = **detectado**. A barra esvazia aos poucos quando John sai de vista.
+- A menos de 2,2 m o ogro percebe John mesmo no escuro.
+- **Tocha acesa**: John fica totalmente iluminado e o alcance da visão do ogro aumenta 70%.
+
+**Luz e esconderijos** (`PlayerStealth.UpdateExposure`):
+
+- A visibilidade soma as luzes próximas (tochas, braseiros, fogueira, fungos, fenda de luz, o lampião de Brann). Uma luz atrás de uma rocha conta pouco.
+- **Sombras** densas reduzem a visibilidade.
+- **Cogumelos altos e samambaias** escondem quase tudo de quem está agachado (12% da visibilidade).
+- **Nichos de teto baixo, fendas e o vão sob a laje caída** são **áreas seguras**: o ogro não entra; se chegar na borda, bufa e desiste.
+
+**Ruído** (`NoiseSystem` + `HearingSensor`), com alcance aproximado:
+
+| Som | Alcance |
+|---|---|
+| passo agachado | 0,8 m |
+| passo andando | 4 m |
+| passo correndo | 10 m |
+| pulo / pouso | 4,5 m / 5 m ou mais (cresce com a queda) |
+| **cascalho e ossos no chão** | ×2,2 andando · ×3 agachado |
+| acender ou apagar a tocha · apagar uma chama | 2,5 a 4 m |
+| pedra arremessada (no ponto do impacto) | 9 m |
+| **disparo** | 26 m: revela a origem na hora e todos os ogros que ouvem **começam a perseguir** |
+
+Paredes no caminho abafam o som (alcance × 0,55; o disparo quase não é abafado). Passos e pousos deixam o ogro **desconfiado** e ele vai investigar um ponto **aproximado**, com erro maior quanto mais longe estiver. Uma pedra o leva ao **ponto exato** do impacto.
+
+**Estados dos ogros** (`OgreAI`). As transições são graduais: o ogro para, vira a cabeça, fareja e rosna antes de mudar de comportamento.
+
+| Estado | Comportamento |
+|---|---|
+| **Patrulhando** | Segue o trajeto (circuito ou ida e volta), parando em cada ponto e olhando para uma direção definida. |
+| **Suspeitando** | Para e encara a direção do som ou do vulto ("?" amarelo). Se a barra encher, persegue; se nada acontecer, investiga. |
+| **Investigando** | Anda até o ponto suspeito, olha em volta e fareja. |
+| **Perseguindo** | Ruge ("!" vermelho) e corre atrás de John, indo até a última posição vista. Perde John depois de alguns segundos sem vê-lo. |
+| **Retornando** | Resmunga e volta ao ponto mais próximo do trajeto. |
+| Atacando / Cambaleando | Golpe de clava (um golpe mata). Uma bala faz o ogro cambalear 1,2 s, e depois ele persegue o atirador. |
+
+**Morte e checkpoint:** o golpe do ogro derruba John (animação "Golpeado") e aparece a tela **"O ogro te esmagou!"**. **Voltar ao checkpoint** leva ao **início do percurso atual**, com os ogros de volta às rotas, as tochas reacesas, as pedras repostas e o revólver como estava ao entrar no percurso.
+
+### 11.4 Os três ogros
+
+| Ogro | Visual | Visão | Audição | Patrulha / perseguição |
+|---|---|---|---|---|
+| **Grukk** | pele verde, clava, olhos amarelos | 13 m · 100° | ×1,15 | 1,35 / 4,0 m/s |
+| **Morg** | pele cinza, armadura de ossos | 11,5 m · 90° | **×1,4** (ouve melhor) | 1,2 / 3,7 m/s |
+| **Brann** | pele vermelha, martelo, olhos vermelhos e **lampião** | **14 m · 110°** | ×1,0 | 1,4 / 4,2 m/s |
+
+Os ogros têm **vida enorme** (nunca chega a zero) e não são inimigos para enfrentar. John correndo (6,2 m/s) é mais rápido que eles, mas correr faz barulho. O lampião de Brann ilumina quem chega perto dele.
+São **exatamente três ogros no nível**: ao entrar em cada percurso, os mesmos três recebem novos trajetos (`StealthSector`). Quem não está no percurso fica desativado.
+
+### 11.5 Roteiro (mapa em `Docs/Mapa_Nivel4.png`)
+
+| Trecho | O que acontece | Habilidade |
+|---|---|---|
+| **Entrada** | John desce pela corda. O **diário de um minerador** explica como os ogros caçam. Ali dá para treinar tudo sem risco: agachar atrás de uma rocha baixa, acender e apagar a tocha, apagar a **tocha dos ogros** na parede (E) e pegar pedras. A **fenda baixa** (teto 1,35 m) só passa agachado. | Agachar, Senhor das Sombras |
+| **Percurso 1 — Primeiro Contato** (1 ogro) | **Grukk** faz um circuito em volta de uma formação rochosa central, com pausas em cada canto. O lado oeste é uma faixa de **sombra** com caixas, escombros e a **laje caída** (vão seguro embaixo), onde está o **Amuleto do Minerador**. O lado leste tem **cogumelos altos**, carrinho de mina e um **nicho baixo** seguro. Perto da saída: **cascalho e ossos** (barulhentos) e um **braseiro** que pode ser apagado. A saída é a fenda baixa do lado leste. | Distração (na primeira pedra que atrai o ogro) |
+| **Percurso 2 — Observação** (2 ogros) | Uma parede de rocha divide a galeria. No lado **escuro** (oeste), **Morg** vai e volta. No lado **iluminado** (leste: fenda de luz, poça brilhante, fungos), **Grukk** dá voltas em torno de pilares e rochedos. Os lados se ligam por uma **passagem larga** (arco) e por uma **fenda estreita** onde só John cabe. Há dois **nichos seguros**; no do leste está o **Dente de Ogro Dourado**. A saída é a fenda baixa no noroeste, com ossos, cascalho e um braseiro no caminho. | Observação |
+| **Percurso 3 — O Covil** (3 ogros) | No centro, a **fogueira dos ogros** com peles, trono, caldeirão, totens e ossos. **Brann** dá voltas em torno dela com o lampião. **Grukk** vai e volta de sul a norte, cortando o círculo de Brann. **Morg** vai e volta de leste a oeste diante da saída. Os trajetos **se cruzam**, então é preciso esperar o momento certo. Há três **nichos seguros** (sudoeste, noroeste e leste), uma faixa de sombra a oeste, cobertura alta (coluna, rochedos, pilhas de caixas) e **tochas perto da saída** que podem ser apagadas. | Travessia Calculada |
+| **Saída das Galerias** | O túnel no nordeste leva ao Nível 5 (cena provisória). A tela final mostra artefatos, habilidades e tempo, e ainda: **vezes visto**, **golpes de ogro**, **disparos** e quantas vezes a tocha foi acesa. | Furtividade; **Fantasma** se nunca foi visto |
+
+Dica para a apresentação: no Percurso 1, fiquem agachados na sombra do oeste e esperem Grukk passar. No Percurso 2, joguem uma pedra no lado leste para atrair Grukk e cruzem pela fenda estreita. No Percurso 3, apaguem a tocha do oeste e usem os nichos.
+
+### 11.6 Requisitos do Nível 4 → onde estão
+
+| Requisito | Implementação (arquivo → função) |
+|---|---|
+| Caverna natural escura, túneis estreitos, grandes formações | `Level4Builder.BuildStart/BuildCourse1/2/3` (paredes, tetos de 4,5 a 10 m, fendas de 1,35 m, nichos de 1,6 m); `DecorateRoom` (paredes irregulares, estalactites, estalagmites, raízes, líquen, musgo, pedregulhos); `Pilar_de_Rocha`, `Coluna_Grossa`, `Rochedo`, `Arco_de_Rocha`, `Laje_Caida` |
+| Vegetação subterrânea, escombros, caixas e estruturas para se esconder | `Cogumelos_Altos`, `Samambaia_da_Caverna` (`HidingSpot`), `Escombros_P/M/G`, `Caixa_Velha(_Grande)`, `Pilha_de_Caixas_Velhas`, `Carrinho_de_Mina`, `Andaime_Quebrado` (tag `Cover`), fendas e nichos (`SafeZone`) |
+| Pouca luz, sombras, pequenas fontes de luz | Luz ambiente quase zero e neblina preta (`SetupLighting`); `LightZone` nas sombras; tochas, braseiros, fogueira, fungos, cristais, poça e fendas de luz |
+| Agachar: menos ruído, menos visível, mais lento | `PlayerStealth` (cápsula 1,8 → 1,15 m, `speedMultiplier 0,5`, passos 0,8 m de ruído, visibilidade × 0,5, câmera mais baixa, `CheckCapsule` para levantar); `John4_Agachado`, `John4_Agachado_Andando` |
+| Visão: cone por ângulo e distância, Raycast, luz, tocha, obstáculos | `VisionSensor.Tick` (ângulo + distância + 3 `Linecast` + `PlayerStealth.VisibilityFactor` + `torchRangeMultiplier`); `PlayerStealth.UpdateExposure` (luzes da cena com `Linecast` de oclusão) |
+| Estados de alerta com transições coerentes | `OgreAI`: Patrulhando, Suspeitando, Investigando, Perseguindo, Retornando (+ Atacando, Cambaleando), com tempo de reação, olhar em volta, memória da perseguição e rugido antes de correr; evento `StateChanged` para o HUD |
+| Ruído: andar baixo, correr alto, pulo/pouso, disparo extremo, investigação aproximada | `NoiseSystem.Emit` (passos, pulo, pouso, tocha, pedras, disparos, explosões); `HearingSensor` (alcance × audição, oclusão por Raycast); `OgreAI.OnHeard` (ponto aproximado para passos, exato para pedras, perseguição imediata para disparos) |
+| Exatamente 3 ogros, vida enorme, um golpe mata, lentos, visão reduzida, audição | `L4Ogres.BuildOgre` (Grukk, Morg, Brann); `OgreAI.maxHealth 600` (nunca zera), `Smash` → `PlayerStealth.Die`; velocidades e sentidos na seção 11.4; `StealthSector` reaproveita os 3 ogros em cada percurso |
+| Animações dos ogros | `Ogro.controller`: `Ogro_Parado`, `Ogro_Andando`, `Ogro_Correndo` (blend de locomoção), `Ogro_Atacando`, `Ogro_Investigando`, `Ogro_Desconfiado`, `Ogro_Rugindo`, `Ogro_Cambaleando` |
+| Tocha facilita a detecção; disparo revela a posição | `StealthTorch` (exposição máxima + alcance da visão × 1,7); `PlayerCombat` → `NoiseSystem.Emit(Gunshot, 26 m)` → `OgreAI.StartChase` |
+| 3 percursos com dificuldade crescente | Entrada + Percurso 1 (1 ogro) + Percurso 2 (2 ogros, lados escuro e iluminado) + Percurso 3 (3 ogros, rotas cruzadas); `SectionTrigger` com dicas; `StealthSector` com checkpoint por percurso |
+| NavMesh / NavMeshAgent | `NavMeshRuntimeBaker` (com `includeLayers` sem gatilhos nem inimigos) e `NavMeshAgent` dos ogros (raio 0,65, altura 3) |
+| Máquina de estados | `OgreAI.Update` → `switch (CurrentState)` → `UpdatePatrol`, `UpdateSuspicious`, `UpdateInvestigate`, `UpdateChase`, `UpdateReturn`, `UpdateAttack`, `UpdateStagger`; entradas `EnterSuspicious`, `StartChase`… |
+| Collider / Rigidbody | Ogros (cápsula + Rigidbody cinemático), John (CharacterController), pedras (`ThrownStone` com Rigidbody), gatilhos de esconderijo, sombra, área segura e chão barulhento |
+| Translate / AddForce | Translate: ícones "?"/"!" flutuando sobre os ogros (`AlertIndicator.LateUpdate`). AddForce: pedras de distração (`ThrownStone.Launch`) e balas (`Projectile.Launch`) |
+| Rotação | Ogros giram para os pontos de patrulha e para olhar em volta (`Quaternion.RotateTowards`); ícones de alerta viram para a câmera; braço da tocha (`StealthTorch.LateUpdate`) |
+| Scripts reutilizáveis de percepção e patrulha | `VisionSensor`, `HearingSensor`, `PatrolRoute`, `AlertIndicator`, `NoiseSystem` (interface `INoiseListener`), `StealthVolume` → `HidingSpot` / `SafeZone` / `NoisyFloor` / `LightZone` |
+| Vetores de prefabs + escolha aleatória | `StealthUtil.SpawnRandom` / `SpawnAll`: `OgreAI.stepEffects/smashEffects/alertEffects/suspiciousEffects/breathEffects`, `NoisyFloor.stepEffects`, `ExtinguishableLight.extinguishEffects`; sons sorteados (`StealthUtil.Pick`); `DecorateRoom` sorteia estalactites e estalagmites |
+| Spawn por funções | `StealthUtil.SpawnAll()` / `SpawnRandom()` chamadas por `OgreAI.UpdateSteps`, `OgreAI.Smash`, `OgreAI.EnterSuspicious`, `OgreAI.StartChase`, `PlayerStealth.Die()`, `ExtinguishableLight.Apply()`; `StonePile` repõe as pedras |
+| Tags e Layers | Tags `Ogre`, `Cover`, `HidingSpot`, `SafeZone` (+ as dos níveis anteriores); Layers `Enemy` (ogros), `Interactable`, `Ignore Raycast` (gatilhos e jogador); máscara de visão `StealthUtil.SightMask` |
+| Partículas: poeira, fumaça, pedrinhas, investigação, alerta, movimento dos ogros, ambiente | `FX4_Poeira_do_Passo` (passos dos ogros), `FX4_Impacto_da_Clava`, `FX4_Pedrinhas`, `FX4_Bafo`, `FX4_Suspeita`, `FX4_Alerta`, `FX4_Fumaca`, `FX4_Fumaca_Apagada`, `FX4_Poeira_no_Ar`, `FX4_Nevoa_Rasteira`, `FX4_Gotas`, `FX4_Esporos`, `FX4_Pedrinhas_do_Teto`, `FX4_Fogueira`, `FX4_Brasas`, `FX4_Faiscas`, `FX4_Cascalho`, `FX4_Folhas` |
+| Sons de passos, respiração, rosnados, alertas e ambiente | 31 sons em `Audio/Nivel4`, sintetizados para o projeto: `ogre_step_1/2`, `ogre_breath` (loop), `ogre_growl_1/2`, `ogre_suspicious_1/2`, `ogre_sniff`, `ogre_roar_1/2`, `ogre_attack`, `ogre_smash`, `ogre_stagger`, `ogre_frustrated`, `stinger_suspicious/spotted/lost`, `heartbeat` (loop), `gravel_step_1/2`, `bone_crunch_1/2`, `foliage_rustle`, `torch_ignite/extinguish`, `crouch_down`, `stand_up`, `player_crushed`, `sector_reached`, `cave_ambience_ogres` e `music_level4` (loops) |
+| Luzes Point, Area, Baked e Mixed | Point: tochas e braseiros dos ogros, fungos, cristais, tocha de John, lampião de Brann. Mixed: fogueira dos ogros, preenchimento das fendas de luz. Area (Rectangle, Baked): `Fenda_de_Luz`. Baked: luzes de preenchimento. `LightingSettings` próprio e sondas de luz |
+| UI com textos e botões; reiniciar | `StealthHUD` (olho, postura, tocha, ruído, ogros, setas, alerta, dicas) + HUD de combate; pausa com **Reiniciar sala** / **Reiniciar jogo**; derrota com **Voltar ao checkpoint** / **Reiniciar jogo**; tela final com **Próximo nível** / **Reiniciar** / **Menu** |
+| Saída para o Nível 5 | `StealthLevelExit` → `GameManager.LoadNextLevel` (cena `Level5`, provisória) |
+| **70+ assets distintos** | `Docs/Inventario_Nivel4.md`, gerado com a contagem real: ≈ 65 prefabs feitos para o Nível 4 (cenário, 3 ogros, John furtivo), 18 partículas e 31 sons, fora texturas, normal maps, materiais, ícones da interface e animações |
+
+### 11.7 Se algo der errado (Nível 4)
+
+- **Aviso "Gere primeiro: Construir Nível 1 e Construir Nível 2":** confiram se `Generated` e `Generated_Nivel2` estão no repositório (`git pull`) ou rodem os geradores dos Níveis 1 e 2.
+- **Ogros parados ou "Failed to create agent":** confiram o pacote *AI Navigation* (vem no template). O NavMesh é gerado ao dar Play.
+- **Ogros que enxergam através das rochas ou tiros que atravessam os ogros:** faltam as Layers `Enemy`/`Interactable`. Rodem o gerador do Nível 4 de novo e façam commit da pasta `ProjectSettings`.
+- **Segurar Ctrl dispara atalhos do editor durante o Play (Ctrl+S, Ctrl+D):** usem **C** para agachar no editor. No jogo compilado isso não acontece.

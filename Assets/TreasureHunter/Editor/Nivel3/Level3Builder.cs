@@ -131,7 +131,7 @@ namespace TreasureHunter.EditorTools
                 BuildScene();
 
                 Progress("Cena provisória do Nível 4", 0.88f);
-                L3UI.BuildLevel4Placeholder();
+                if (!Level4Builder.IsGenerated) L3UI.BuildLevel4Placeholder();
                 EditorBuildSettings.scenes = LevelBuilder.BuildScenes();
                 Progress("Botão \"Nível 3\" no menu", 0.94f);
                 L3UI.PatchMainMenu();

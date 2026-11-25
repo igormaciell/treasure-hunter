@@ -232,6 +232,16 @@ namespace TreasureHunter.EditorTools
         }
 
         /// <summary>
+        /// Carrega um prefab gerado pelo Nível 2 (reaproveitado nos níveis seguintes: John armado, bala, pedras...).
+        /// </summary>
+        /// <param name="id">Nome do prefab.</param>
+        /// <returns>O prefab ou nulo.</returns>
+        public static GameObject L2Prefab(string id)
+        {
+            return AssetDatabase.LoadAssetAtPath<GameObject>(Level2Root + "/Prefabs/" + id + ".prefab");
+        }
+
+        /// <summary>
         /// Busca um prefab pelo identificador: primeiro os do Nível 2, depois os do Nível 1.
         /// </summary>
         /// <param name="id">Identificador.</param>

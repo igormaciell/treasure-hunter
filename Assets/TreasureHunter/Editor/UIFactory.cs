@@ -429,11 +429,12 @@ namespace TreasureHunter.EditorTools
             Label(sub, "Texto", "O Templo de Añang  —  Nível 1: A Entrada do Templo", 32, TextAnchor.MiddleLeft, TextColor);
 
             RectTransform col = Rect(c, "Botoes", new Vector2(0, 0.5f), new Vector2(0, 0.5f), new Vector2(330, -80), new Vector2(460, 400), new Vector2(0.5f, 0.5f));
-            menu.playButton = Button(col, "Jogar", new Vector2(0, 180));
-            menu.level2Button = Button(col, "Nível 2", new Vector2(0, 95));
-            menu.level3Button = Button(col, "Nível 3", new Vector2(0, 10));
-            menu.controlsButton = Button(col, "Controles", new Vector2(0, -75));
-            menu.quitButton = Button(col, "Sair", new Vector2(0, -160));
+            menu.playButton = Button(col, "Jogar", new Vector2(0, 195));
+            menu.level2Button = Button(col, "Nível 2", new Vector2(0, 117));
+            menu.level3Button = Button(col, "Nível 3", new Vector2(0, 39));
+            menu.level4Button = Button(col, "Nível 4", new Vector2(0, -39));
+            menu.controlsButton = Button(col, "Controles", new Vector2(0, -117));
+            menu.quitButton = Button(col, "Sair", new Vector2(0, -195));
 
             RectTransform credits = Rect(c, "Creditos", new Vector2(0, 0), new Vector2(0, 0), new Vector2(110, 30), new Vector2(1400, 60), new Vector2(0, 0));
             Label(credits, "Texto", "UVV · Ciência da Computação · Davi D'Ávila, Hugo Almeida, Igor Maciel, Pedro Souza · 2026", 22, TextAnchor.LowerLeft, new Color(1, 1, 1, 0.65f));
@@ -455,7 +456,8 @@ namespace TreasureHunter.EditorTools
                 "Esc — pausa (reiniciar sala ou jogo)\n" +
                 "Nível 2: clique esq. atirar · direito mirar · R recarregar\n" +
                 "V coronhada/faca · G pedra · 1/2 ou Q trocar arma\n" +
-                "Nível 3: pule contra bordas para escalar · T (segurar) totem", 24, TextAnchor.UpperLeft, TextColor);
+                "Nível 3: pule contra bordas para escalar · T (segurar) totem\n" +
+                "Nível 4: C/Ctrl agachar · F acender/apagar a tocha · G pedra (distração)", 22, TextAnchor.UpperLeft, TextColor);
             menu.closeControlsButton = Button(box, "Voltar", new Vector2(0, -290));
 
             EventSystem();

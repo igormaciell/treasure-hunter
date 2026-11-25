@@ -87,7 +87,7 @@ namespace TreasureHunter
             if (!madeNoise)
             {
                 madeNoise = true;
-                EnemyBase.MakeNoise(point, noiseRadius);
+                NoiseSystem.Emit(point, noiseRadius, NoiseType.Impact, gameObject, false);
             }
         }
     }

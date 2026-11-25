@@ -147,6 +147,13 @@ namespace TreasureHunter.EditorTools
             {
                 EditorUtility.ClearProgressBar();
             }
+            // O Nível 4 reaproveita o John armado, a bala e as pedras do Nível 2: se ele já existia, é refeito
+            // para continuar apontando para os prefabs recém-criados.
+            if (Level4Builder.IsGenerated)
+            {
+                Level4Builder.Build();
+                EditorSceneManager.OpenScene(L2Core.Level2ScenePath);
+            }
             return true;
         }
 

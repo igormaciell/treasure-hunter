@@ -160,7 +160,7 @@ namespace TreasureHunter
             Projectile.SpawnEffects(explosionEffects, center, Vector3.up);
             CombatAudio.Play(explosionClip, center, 1f, 0.05f);
             if (ThirdPersonCamera.Instance != null) ThirdPersonCamera.Instance.Shake(0.5f, 0.18f);
-            EnemyBase.MakeNoise(center, 22f);
+            NoiseSystem.Emit(center, 22f, NoiseType.Explosion, gameObject, false);
 
             HashSet<IDamageable> done = new HashSet<IDamageable>();
             int n = Physics.OverlapSphereNonAlloc(center, explosionRadius, buffer, ~0, QueryTriggerInteraction.Ignore);

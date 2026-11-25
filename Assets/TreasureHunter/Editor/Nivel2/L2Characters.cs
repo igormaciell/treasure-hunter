@@ -867,8 +867,9 @@ namespace TreasureHunter.EditorTools
         /// faca, golpe de faca e arremesso de pedra.
         /// </summary>
         /// <param name="model">Raiz do Animator (para a máscara).</param>
+        /// <param name="controllerName">Nome do arquivo (o Nível 4 reaproveita esta montagem e acrescenta o agachar).</param>
         /// <returns>O controller.</returns>
-        private static AnimatorController PlayerController(Transform model)
+        internal static AnimatorController PlayerController(Transform model, string controllerName = "John_Craft_Combate")
         {
             // Clipes da camada base (iguais aos do Nível 1, agora com o braço direito balançando).
             AnimationClip idle = L2Anim.Make("John2_Parado", 2f, true, JohnIdle);
@@ -893,7 +894,7 @@ namespace TreasureHunter.EditorTools
             AnimationClip toss = L2Anim.Make("John2_Arremesso", 0.5f, false, (c, l) =>
                 L2Anim.Keys(c, L2Anim.ArmR, T(0f, 0.18f, 0.28f, l), T(-30f, -175f, -60f, -28f), null, T(4f, 15f, 5f, 4f)));
 
-            AnimatorController ctrl = AnimatorController.CreateAnimatorControllerAtPath(L2Core.AnimationsPath + "/John_Craft_Combate.controller");
+            AnimatorController ctrl = AnimatorController.CreateAnimatorControllerAtPath(L2Core.AnimationsPath + "/" + controllerName + ".controller");
             ctrl.AddParameter("Speed", AnimatorControllerParameterType.Float);
             ctrl.AddParameter("Grounded", AnimatorControllerParameterType.Bool);
             ctrl.AddParameter("VerticalVelocity", AnimatorControllerParameterType.Float);
@@ -1021,7 +1022,7 @@ namespace TreasureHunter.EditorTools
         /// <param name="trigger">Gatilho.</param>
         /// <param name="toSelf">Permite reiniciar a própria ação (disparos seguidos).</param>
         /// <param name="duration">Duração da mistura.</param>
-        private static void ActionState(AnimatorStateMachine sm, AnimatorState state, string trigger, bool toSelf, float duration)
+        internal static void ActionState(AnimatorStateMachine sm, AnimatorState state, string trigger, bool toSelf, float duration)
         {
             AnimatorStateTransition t = sm.AddAnyStateTransition(state);
             t.AddCondition(AnimatorConditionMode.If, 0f, trigger);
@@ -1035,7 +1036,7 @@ namespace TreasureHunter.EditorTools
         /// <param name="x">Ângulo X.</param>
         /// <param name="y">Ângulo Y.</param>
         /// <param name="z">Ângulo Z.</param>
-        private static void ArmHold(AnimationClip c, float l, float x, float y, float z)
+        internal static void ArmHold(AnimationClip c, float l, float x, float y, float z)
         {
             L2Anim.Swing(c, L2Anim.ArmR, l, x, 1.5f, 1f, 0f, z, y);
         }
@@ -1043,7 +1044,7 @@ namespace TreasureHunter.EditorTools
         /// <summary>John parado (como no Nível 1, com o braço direito solto).</summary>
         /// <param name="c">Clipe.</param>
         /// <param name="l">Duração.</param>
-        private static void JohnIdle(AnimationClip c, float l)
+        internal static void JohnIdle(AnimationClip c, float l)
         {
             L2Anim.HipBob(c, l, 0.02f, 1f);
             L2Anim.Swing(c, L2Anim.Body, l, 0f, 1.5f, 1f, 0f);
@@ -1061,7 +1062,7 @@ namespace TreasureHunter.EditorTools
         /// <param name="armAmp">Amplitude dos braços.</param>
         /// <param name="bob">Balanço vertical.</param>
         /// <param name="lean">Inclinação.</param>
-        private static void JohnLocomotion(AnimationClip c, float l, float legAmp, float armAmp, float bob, float lean)
+        internal static void JohnLocomotion(AnimationClip c, float l, float legAmp, float armAmp, float bob, float lean)
         {
             L2Anim.HipBob(c, l, bob, 2f);
             L2Anim.Swing(c, L2Anim.Body, l, lean, 2f, 2f, 0f);
@@ -1075,7 +1076,7 @@ namespace TreasureHunter.EditorTools
         /// <summary>John pulando.</summary>
         /// <param name="c">Clipe.</param>
         /// <param name="l">Duração.</param>
-        private static void JohnJump(AnimationClip c, float l)
+        internal static void JohnJump(AnimationClip c, float l)
         {
             float[] t = T(0f, l);
             L2Anim.HipKeys(c, t, T(L2Anim.HipHeight, L2Anim.HipHeight));
@@ -1090,7 +1091,7 @@ namespace TreasureHunter.EditorTools
         /// <summary>John caindo.</summary>
         /// <param name="c">Clipe.</param>
         /// <param name="l">Duração.</param>
-        private static void JohnFall(AnimationClip c, float l)
+        internal static void JohnFall(AnimationClip c, float l)
         {
             L2Anim.HipBob(c, l, 0f, 1f);
             L2Anim.Swing(c, L2Anim.Body, l, 4f, 3f, 1f, 0f);
@@ -1104,7 +1105,7 @@ namespace TreasureHunter.EditorTools
         /// <summary>John empurrando.</summary>
         /// <param name="c">Clipe.</param>
         /// <param name="l">Duração.</param>
-        private static void JohnPush(AnimationClip c, float l)
+        internal static void JohnPush(AnimationClip c, float l)
         {
             L2Anim.HipBob(c, l, 0.03f, 2f);
             L2Anim.Swing(c, L2Anim.Body, l, 22f, 2f, 2f, 0f);
@@ -1118,7 +1119,7 @@ namespace TreasureHunter.EditorTools
         /// <summary>John recebendo dano (tranco para trás).</summary>
         /// <param name="c">Clipe.</param>
         /// <param name="l">Duração.</param>
-        private static void JohnHurt(AnimationClip c, float l)
+        internal static void JohnHurt(AnimationClip c, float l)
         {
             float[] t = T(0f, 0.08f, l);
             L2Anim.HipKeys(c, t, T(L2Anim.HipHeight, L2Anim.HipHeight - 0.05f, L2Anim.HipHeight));

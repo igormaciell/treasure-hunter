@@ -48,6 +48,22 @@ namespace TreasureHunter
 
         /// <summary>Indica se o personagem está apoiado no chão.</summary>
         public bool IsGrounded { get; private set; }
+        /// <summary>Multiplicador de velocidade aplicado por outros sistemas (agachar). 1 = normal.</summary>
+        [System.NonSerialized] public float speedMultiplier = 1f;
+        /// <summary>Impede correr (por exemplo, agachado).</summary>
+        [System.NonSerialized] public bool runBlocked;
+        /// <summary>Impede pular (por exemplo, agachado: o Espaço levanta em vez de pular).</summary>
+        [System.NonSerialized] public bool jumpBlocked;
+        /// <summary>Multiplicador do volume dos passos (agachado = mais baixo).</summary>
+        [System.NonSerialized] public float footstepVolume = 1f;
+        /// <summary>O jogador está segurando Shift e se movendo (corrida de fato).</summary>
+        public bool IsRunning => running && !runBlocked && desiredMove.sqrMagnitude > 0.01f;
+        /// <summary>Há entrada de movimento neste quadro.</summary>
+        public bool HasMoveInput => desiredMove.sqrMagnitude > 0.01f;
+        /// <summary>Disparado no instante do pulo.</summary>
+        public event System.Action Jumped;
+        /// <summary>Disparado ao tocar o chão depois de um tempo no ar (tempo no ar em segundos).</summary>
+        public event System.Action<float> Landed;
         /// <summary>Direção em que o modelo está olhando (usada pela interação).</summary>
         public Vector3 Facing => model != null ? model.forward : transform.forward;
 
@@ -149,6 +165,7 @@ namespace TreasureHunter
                 // Toca o som de pouso se ficou tempo suficiente no ar.
                 if (!wasGrounded && airTime > 0.35f && AudioManager.Instance != null)
                     AudioManager.Instance.PlayAt(AudioManager.Instance.land, transform.position, 0.7f);
+                if (!wasGrounded && airTime > 0.2f) Landed?.Invoke(airTime);
                 lastGroundedTime = Time.time;
                 airTime = 0f;
                 // Ao pousar, descarta um pedido de animação de pulo que tenha ficado pendente.
@@ -166,7 +183,7 @@ namespace TreasureHunter
         /// </summary>
         private void ApplyMovement()
         {
-            float targetSpeed = running ? runSpeed : walkSpeed;
+            float targetSpeed = (running && !runBlocked ? runSpeed : walkSpeed) * speedMultiplier;
             Vector3 targetVelocity = desiredMove * targetSpeed;
             Vector3 velocity = rb.linearVelocity;
             Vector3 horizontal = new Vector3(velocity.x, 0f, velocity.z);
@@ -195,6 +212,7 @@ namespace TreasureHunter
             bool buffered = Time.time - lastJumpPressedTime <= jumpBufferTime;
             bool coyote = Time.time - lastGroundedTime <= coyoteTime;
             if (!buffered || !coyote) return;
+            if (jumpBlocked) { lastJumpPressedTime = -10f; return; }
 
             // Zera a velocidade vertical e aplica um impulso para cima com AddForce.
             Vector3 v = rb.linearVelocity;
@@ -207,6 +225,7 @@ namespace TreasureHunter
             IsGrounded = false;
             if (animator != null) animator.SetTrigger(JumpHash);
             if (AudioManager.Instance != null) AudioManager.Instance.PlayAt(AudioManager.Instance.jump, transform.position, 0.6f);
+            Jumped?.Invoke();
         }
 
         /// <summary>
@@ -258,8 +277,8 @@ namespace TreasureHunter
             stepTimer -= Time.deltaTime;
             if (stepTimer <= 0f)
             {
-                stepTimer = speed > walkSpeed + 0.5f ? stepIntervalRun : stepIntervalWalk;
-                if (AudioManager.Instance != null) AudioManager.Instance.PlayFootstep(transform.position, 0.45f);
+                stepTimer = speed > walkSpeed + 0.5f ? stepIntervalRun : stepIntervalWalk / Mathf.Max(0.6f, speedMultiplier);
+                if (AudioManager.Instance != null && footstepVolume > 0.01f) AudioManager.Instance.PlayFootstep(transform.position, 0.45f * footstepVolume);
             }
         }
 
