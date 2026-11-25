@@ -5,6 +5,7 @@ namespace TreasureHunter
     /// <summary>
     /// Câmera em terceira pessoa que orbita ao redor de John com o mouse,
     /// evita atravessar paredes (SphereCast) e pode tremer (armadilhas, explosões).
+    /// No Nível 2 também fica sobre o ombro e aproxima ao mirar (os valores padrão mantêm o Nível 1 igual).
     /// </summary>
     public class ThirdPersonCamera : MonoBehaviour
     {
@@ -26,6 +27,27 @@ namespace TreasureHunter
 
         [Header("Colisão")]
         public float collisionRadius = 0.25f;
+        /// <summary>Camadas que bloqueiam a câmera (o Nível 2 ignora inimigos e projéteis).</summary>
+        public LayerMask collisionMask = Physics.DefaultRaycastLayers;
+
+        /// <summary>Deslocamento lateral do pivô (x = direita), sempre aplicado. Zero no Nível 1.</summary>
+        [Header("Ombro e mira (Nível 2)")]
+        public Vector3 shoulderOffset = Vector3.zero;
+        /// <summary>Deslocamento do pivô enquanto mira.</summary>
+        public Vector3 aimShoulderOffset = new Vector3(0.65f, 0.1f, 0f);
+        /// <summary>Distância da câmera enquanto mira.</summary>
+        public float aimDistance = 2.1f;
+        /// <summary>Campo de visão enquanto mira.</summary>
+        public float aimFieldOfView = 48f;
+        /// <summary>Sensibilidade relativa do mouse enquanto mira.</summary>
+        public float aimSensitivityScale = 0.6f;
+
+        /// <summary>Ligado pelo sistema de combate enquanto o jogador mira (botão direito).</summary>
+        public bool Aiming { get; set; }
+        /// <summary>Ângulo horizontal atual da órbita.</summary>
+        public float Yaw => yaw;
+        /// <summary>Ângulo vertical atual da órbita (positivo = olhando para baixo).</summary>
+        public float Pitch => pitch;
 
         private float yaw;
         private float pitch = 15f;
@@ -34,6 +56,9 @@ namespace TreasureHunter
         private float shakeTime;
         private float shakeDuration;
         private float shakeMagnitude;
+        private float aimBlend;
+        private Camera cam;
+        private float baseFieldOfView = 60f;
 
         /// <summary>
         /// Registra o singleton e inicializa ângulos a partir da rotação atual.
@@ -43,6 +68,8 @@ namespace TreasureHunter
             Instance = this;
             yaw = transform.eulerAngles.y;
             currentDistance = distance;
+            cam = GetComponent<Camera>();
+            if (cam != null) baseFieldOfView = cam.fieldOfView;
         }
 
         /// <summary>
@@ -63,11 +90,14 @@ namespace TreasureHunter
 
             // Gira a órbita conforme o mouse, somente quando o jogador pode agir.
             bool canAct = GameManager.Instance == null || GameManager.Instance.CanPlayerAct();
+            // Transição suave para a mira sobre o ombro (Nível 2). No Nível 1 fica sempre em zero.
+            aimBlend = Mathf.MoveTowards(aimBlend, Aiming ? 1f : 0f, Time.unscaledDeltaTime * 6f);
             if (canAct)
             {
                 Vector2 look = GameInput.Look();
-                yaw += look.x * sensitivity;
-                pitch -= look.y * sensitivity;
+                float sens = sensitivity * Mathf.Lerp(1f, aimSensitivityScale, aimBlend);
+                yaw += look.x * sens;
+                pitch -= look.y * sens;
                 pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
             }
 
@@ -78,10 +108,24 @@ namespace TreasureHunter
             Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
             Vector3 back = rotation * Vector3.back;
 
+            // Pivô sobre o ombro (Nível 2): desloca para o lado sem entrar na parede.
+            Vector3 pivot = smoothedTarget;
+            Vector3 shoulder = Vector3.Lerp(shoulderOffset, aimShoulderOffset, aimBlend);
+            if (shoulder.sqrMagnitude > 0.0001f)
+            {
+                Vector3 side = Quaternion.Euler(0f, yaw, 0f) * shoulder;
+                float len = side.magnitude;
+                if (Physics.SphereCast(smoothedTarget, collisionRadius, side / len, out RaycastHit sideHit, len, collisionMask, QueryTriggerInteraction.Ignore))
+                    len = Mathf.Max(0f, sideHit.distance - 0.05f);
+                pivot = smoothedTarget + side.normalized * len;
+            }
+            float baseDistance = Mathf.Lerp(distance, aimDistance, aimBlend);
+            if (cam != null) cam.fieldOfView = Mathf.Lerp(baseFieldOfView, aimFieldOfView, aimBlend);
+
             // Se houver parede entre o personagem e a câmera, aproxima a câmera.
-            float wanted = distance;
-            if (Physics.SphereCast(smoothedTarget, collisionRadius, back, out RaycastHit hit, distance,
-                Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+            float wanted = baseDistance;
+            if (Physics.SphereCast(pivot, collisionRadius, back, out RaycastHit hit, baseDistance,
+                collisionMask, QueryTriggerInteraction.Ignore))
             {
                 wanted = Mathf.Max(minDistance, hit.distance - 0.05f);
             }
@@ -89,7 +133,7 @@ namespace TreasureHunter
             float speed = wanted < currentDistance ? 30f : 4f;
             currentDistance = Mathf.Lerp(currentDistance, wanted, 1f - Mathf.Exp(-speed * Time.unscaledDeltaTime));
 
-            transform.position = smoothedTarget + back * currentDistance + GetShakeOffset();
+            transform.position = pivot + back * currentDistance + GetShakeOffset();
             transform.rotation = rotation;
         }
 

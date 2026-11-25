@@ -143,6 +143,7 @@ namespace TreasureHunter.EditorTools
             gm.playerHealth = player.GetComponent<PlayerHealth>();
             gm.ui = ui;
             gm.totalArtifacts = 3;
+            gm.nextLevelScene = "Level2";
             gm.startObjective = "Siga a trilha até as ruínas do templo de Añang.";
         }
 

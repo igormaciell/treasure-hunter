@@ -1,6 +1,7 @@
-# Treasure Hunter — Nível 1: A Entrada do Templo
+# Treasure Hunter — Nível 1: A Entrada do Templo · Nível 2: As Catacumbas de Añang
 
-Projeto Unity da entrega do 1º bimestre (Game Development — UVV 2026/2).
+Projeto Unity das entregas do 1º e do 2º bimestre (Game Development — UVV 2026/2).
+**Novo: Nível 2 (combate)** — veja a seção [9. Nível 2](#9-nível-2--as-catacumbas-de-añang-combate).
 **Unity 6000.0.8f1 · template Universal 3D (URP) · 3ª pessoa · tema principal: Skills.**
 
 > Os scripts **não usam assets de terceiros**: todo o visual (estilo voxel/retrô do GDD), as animações e os sons
@@ -56,6 +57,9 @@ No Unity: **Window → Package Manager → My Assets**, baixe e importe os dois.
 - Se não encontrar algum, usa texturas e árvores próprias no estilo voxel. O jogo funciona igual.
 - O que foi usado de cada pacote aparece no fim do `Docs/Inventario_Nivel1.md` (seção "Terreno — assets usados").
 - Quem gerar o nível deve fazer commit também das pastas que os pacotes criam dentro de `Assets`. O terreno aponta para os arquivos delas; sem elas, os colegas veriam o terreno sem essas texturas e árvores.
+- O Nature Starter Kit 2 é de 2016 (pipeline Built-in). Depois de importar:
+  1. apaguem a pasta `Assets/NatureStarterKit2/Editor` (scripts antigos de efeitos de câmera que não compilam no Unity 6 e impedem o Play);
+  2. rodem **Treasure Hunter → Converter materiais dos pacotes da aula para URP**, para as árvores e arbustos não ficarem cor-de-rosa. O Render Pipeline Converter do Unity não converte esses materiais.
 
 | Passo da aula | Como ficou no terreno do jogo |
 | --- | --- |
@@ -92,6 +96,8 @@ Outras novidades da superfície:
 | F ou clique esquerdo | erguer/abaixar a tocha |
 | Tab | Diário de Habilidades |
 | Esc | pausa (Continuar · Reiniciar sala · **Reiniciar jogo** · Menu principal) |
+
+No Nível 2 a tocha dá lugar às armas (tabela completa na seção 9.2).
 
 ---
 
@@ -190,12 +196,15 @@ Lembrem também da OBS 2 do PDF: validar com o professor quais assets de terceir
 
 ```
 Assets/TreasureHunter/
-├── Scripts/        (jogo: Core, Player, Interaction, Hazards, Collectibles, Effects, UI)
-├── Editor/         (gerador do nível: menu "Treasure Hunter")
-├── Audio/          (28 sons .wav originais)
-├── Docs/           (mapa e inventário de assets)
-├── Generated/      (criado pelo gerador: texturas, materiais, malhas, prefabs, animações)
-└── Scenes/         (criado pelo gerador: MainMenu e Level1)
+├── Scripts/            (jogo: Core, Player, Interaction, Hazards, Collectibles, Effects, UI,
+│                        Combat e Enemies — estes dois são do Nível 2)
+├── Editor/             (gerador: menu "Treasure Hunter"; Editor/Nivel2 = gerador do Nível 2)
+├── Audio/              (28 sons do Nível 1) e Audio/Nivel2 (41 sons do Nível 2)
+├── Docs/               (mapas e inventários de assets dos dois níveis)
+├── Generated/          (criado pelo gerador do Nível 1)
+├── Generated_Nivel2/   (criado pelo gerador do Nível 2: texturas, mapas normais, materiais, malhas,
+│                        prefabs, animações, máscara de animação e configuração de iluminação)
+└── Scenes/             (MainMenu, Level1, Level2 e Level3 — esta é provisória)
 ```
 
 ---
@@ -205,4 +214,93 @@ Assets/TreasureHunter/
 - **Erros vermelhos no Console logo ao abrir:** confirmem a versão (6000.0.8f1) e o template Universal 3D. O projeto usa o pacote *Input System*, que já vem nesse template.
 - **Materiais rosa:** o projeto não está usando o URP. Criem o projeto pelo template Universal 3D.
 - **O menu "Treasure Hunter" não aparece:** existe algum erro de compilação no Console. Ele precisa ser resolvido primeiro.
+- **Nível 2: esqueletos parados ou aviso "Failed to create agent":** o NavMesh é gerado ao dar Play (objeto `Gerenciadores` → `NavMeshRuntimeBaker`). Confiram se o pacote *AI Navigation* está instalado (Window → Package Manager; vem no template).
+- **Nível 2: tiros atravessando inimigos, câmera batendo nos esqueletos:** faltam as Layers `Enemy`, `Projectile` e `Interactable`. Rodem o gerador do Nível 2 de novo (ele cria as Layers) e façam commit da pasta `ProjectSettings`.
 - Mandem o texto do erro do Console para corrigirmos.
+
+---
+
+## 9. Nível 2 — As Catacumbas de Añang (combate)
+
+John desce às catacumbas sob o templo. Os escombros fecham a escada por onde ele veio, e o único caminho é atravessar três salas guardadas por esqueletos.
+O nível apresenta o **combate**: um revólver com **apenas 25 balas para o nível inteiro**, coronhada, faca, pedras e armadilhas do cenário.
+
+### 9.1 Como gerar (uma pessoa só)
+
+O Nível 2 tem um gerador próprio. Ele **não regera nem altera os assets do Nível 1**: só cria a pasta `Generated_Nivel2` e as cenas novas.
+
+1. `git pull`. Extraiam o pacote `Atualizacao_Nivel2.zip` **por cima da pasta do projeto** (substituir arquivos) e abram o Unity.
+2. Esperem compilar (Console sem erros vermelhos).
+3. Rodem **Treasure Hunter → Construir Nível 2 (combate)**. O Nível 1 precisa já ter sido gerado (no repositório ele já está). O gerador:
+   - cria as **Tags** `Enemy`, `Projectile`, `Weapon`, `Destructible` e as **Layers** `Enemy`, `Projectile`, `Interactable` (em `ProjectSettings`);
+   - cria texturas com **mapas normais**, materiais, partículas, 78 prefabs, animações, a cena `Level2` e a cena provisória `Level3`;
+   - acrescenta o botão **Próximo nível** na tela final do Nível 1 e o botão **Nível 2** no menu principal (só esses ajustes; o resto das cenas fica igual);
+   - coloca `Level2` e `Level3` no *Build Settings*;
+   - grava `Docs/Inventario_Nivel2.md` (contagem real de assets).
+4. Testem: abram `MainMenu`, cliquem em **Nível 2** e joguem (ou abram a cena `Level2` e deem Play).
+5. Commit e push de tudo: `Assets` (inclusive `Generated_Nivel2`, `Audio/Nivel2`, `Scenes`, `Docs`) **e `ProjectSettings`** (Tags, Layers e Build Settings). Os outros só dão `git pull`.
+
+Observações:
+
+- Rodar o gerador do Nível 2 de novo refaz só o que é do Nível 2. Edições feitas à mão na cena `Level2` ou em `Generated_Nivel2` se perdem.
+- Rodar **Construir Nível 1** de novo agora também regera o Nível 2 no final, porque os prefabs do Nível 2 reaproveitam efeitos, itens e o modelo de John do Nível 1.
+- **Iluminação assada (opcional):** **Treasure Hunter → Assar iluminação do Nível 2**. Leva alguns minutos; depois salvem a cena (Ctrl+S) e façam commit da pasta `Scenes/Level2` criada pelo Unity. Sem assar, o nível funciona normalmente: as luzes *Realtime* e *Mixed* já iluminam tudo. As luzes *Baked* e de *Área* só aparecem depois de assar.
+
+### 9.2 Controles de combate
+
+| Tecla | Ação |
+|---|---|
+| Clique esquerdo | atirar (revólver) · golpear (faca) |
+| Botão direito (segurar) | mirar: câmera de ombro, zoom, menos dispersão, anda mais devagar |
+| R | recarregar o tambor (só com balas da reserva) |
+| V | coronhada (revólver, não gasta bala) · golpe de faca |
+| G | arremessar pedra (atordoa e faz barulho) |
+| 1 / 2, Q ou roda do mouse | trocar entre revólver e faca |
+| E | pegar o revólver, pegar pedras, puxar alavanca, ler inscrições |
+
+Tiro na **cabeça** causa o dobro de dano. Cada tiro faz barulho e acorda inimigos próximos.
+
+### 9.3 Roteiro (mapa em `Docs/Mapa_Nivel2.png`)
+
+| Trecho | O que acontece | Habilidade |
+|---|---|---|
+| **Corredor de entrada** | Escombros bloqueiam a escada atrás de John. Sob um foco de luz está a mesa com o **revólver** (E): 6 balas no tambor + 19 na reserva = **25 no nível inteiro** (não há munição para coletar). Pegar a arma abre a grade da cripta. Uma inscrição avisa sobre os guardiões. | — |
+| **Sala 1 — Cripta dos Esquecidos** | Área segura com **boneco de treino** (atirar e dar coronhada) e **pilha de pedras**. Ao avançar, **2 esqueletos com faca** surgem do chão. Sarcófagos servem de cobertura, há **espinhos** no piso e um **barril explosivo**. Cada esqueleto tem **35% de chance de deixar a faca**, que vira um ataque corpo a corpo alternativo. Vencer abre a grade norte. | Corpo a Corpo, Pontaria, Recarga Tática |
+| **Galeria dos Arqueiros (Sala 2)** | **3 arqueiros** mantêm distância (7 a 15 m), escolhem pontos de tiro com visão do jogador, tentam **flanquear** e trocam de posição quando John se esconde. As flechas fazem **curva** (gravidade) e se cravam nas paredes. Meias-paredes, pilares, altar e barricadas no meio da sala protegem **os dois lados**. A **Adaga Cerimonial** está no altar. | Cobertura |
+| **Corredor da lâmina** | Uma **lâmina pendular** (Rigidbody + HingeJoint + torque) varre o corredor. É preciso passar no tempo certo. | — |
+| **Salão do Guardião (Sala 3)** | **7 inimigos**: 3 esqueletos com faca que avançam, 2 arqueiros em **plataformas elevadas** e 2 **brutamontes** (machado, muita vida, olhos laranja) **dormindo junto à saída**: tiros os acordam. O jogador decide a ordem: eliminar as facas em silêncio (coronhada, faca, pedras, espinhos), derrubar os arqueiros e só então enfrentar os brutamontes. A **alavanca** perto da entrada derruba o **teto rachado** sobre o centro da sala. O **Amuleto de Osso** fica numa plataforma. | Improviso, Estratégia |
+| **Saída** | Vencer a Sala 3 abre a última grade. A tela final mostra inimigos derrotados, **disparos usados (x/25)**, precisão e se a faca foi encontrada, com os botões **Próximo nível**, **Reiniciar jogo** e **Menu principal**. O Nível 3 ainda é uma tela provisória. | — |
+
+Ao morrer, **Voltar ao checkpoint** reinicia só a sala atual: inimigos, barris e armadilhas voltam, e o arsenal volta ao que John tinha ao entrar na sala. Assim, a conta das 25 balas nunca aumenta.
+
+### 9.4 Requisitos do Nível 2 → onde estão
+
+| Requisito | Implementação (arquivo → função) |
+|---|---|
+| 3 salas ligadas por passagens | `Level2Builder.BuildRoom1/2/3`, `BuildBladeCorridor`, `BuildExit`; grades `IronGate` entre as salas |
+| Arma de longo alcance com **25 disparos** | `PlayerCombat` (`startingShots = 25`, tambor de 6). `GiveRevolver` limita a 25 e `FinishReload` só move balas da reserva para o tambor. Não existe munição extra no nível. `CombatRoom` guarda e restaura o arsenal ao reiniciar a sala |
+| Controle de munição + UI | `CombatHUD`: tambor com 6 balas desenhadas, "tambor \| reserva", **"Disparos restantes: X / 25"**, barra de recarga, mira dinâmica (vermelha sobre inimigo), marcador de acerto |
+| Colisão do projétil e dano | `Projectile` (Rigidbody, `SphereCastNonAlloc` + `OnTriggerEnter`), `IDamageable.TakeHit`, `Hitbox` (cabeça ×2), `DamageInfo` |
+| Animações de disparo e recarga | Camada "Bracos" do Animator de John (`L2Characters.PlayerController`): `John2_Mirando`, `John2_Disparo`, `John2_Recarga`, `John2_Coronhada`, `John2_Faca_Golpe`, `John2_Arremesso` |
+| Partículas de impacto | `FX2_Faiscas`, `FX2_Poeira_de_Impacto`, `FX2_Lascas_de_Osso`, `FX_Pebbles`, clarão e fumaça do disparo |
+| Sons de disparo, impacto e morte | `CombatAudio` + `revolver_shot`, `bullet_ricochet_1/2`, `bullet_bone_hit`, `skeleton_death_1/2` e mais 35 sons em `Audio/Nivel2` |
+| Sala 1: 2 inimigos com faca, NavMesh, animações | `MeleeEnemy` + `NavMeshAgent`; clipes `Esqueleto_Levantando/Parado/Andando/Correndo/Ataque_Faca/Dano/Morte` |
+| Faca com **35%** de chance | `EnemyLoot.dropChance = 0.35` (`TryDrop`: `Random.value < 0.35`), prefab `Faca_Coletavel`; `PlayerCombat.TryMelee(true)` |
+| Sala 2: 3 arqueiros, flechas com trajetória, cobertura | `RangedEnemy` (`BallisticVelocity`, pontos de tiro com pontuação por distância, visão e flanco, `Retreat`, troca de posição quando perde a visão); `Flecha` com gravidade e `stickOnImpact` |
+| Sala 3: 7 inimigos mistos | `CombatRoom.groups`: 3 facas (alertas), 2 arqueiros (plataformas), 2 brutamontes (dormentes; acordam por visão ou barulho: `EnemyBase.MakeNoise`) |
+| Passagem para o próximo nível | `CombatRoom.gatesOnClear` → `IronGate` → `CombatLevelExit` → `GameManager.LoadNextLevel` (cena `Level3`) |
+| Collider / Rigidbody | Projéteis, pedras, destroços, pedregulhos, lâmina, caixotes, barris, esqueletos (cinemáticos) |
+| Translate | `IronGate` (grades sobem e descem), `SpikeTrap` (espinhos) |
+| AddForce | `Projectile.Launch`, `ThrownStone.Launch`, destroços de `Destructible`, `AddExplosionForce` do barril, `CrushingRock` |
+| Rotação / Torque | `PendulumTrap` (`AddTorque` + HingeJoint), `ThrownStone` e destroços (`AddTorque`), `TrapLever`, `TrainingDummy`, `Spinner` da faca |
+| NavMesh | `NavMeshRuntimeBaker` (gera o NavMesh ao iniciar), `NavMeshAgent` nos inimigos, `NavMeshObstacle` com *carving* nas grades, caixotes e barris |
+| Scripts reutilizáveis | `EnemyBase` (abstrata) → `MeleeEnemy` / `RangedEnemy`; `Projectile` serve para balas e flechas; `Destructible` para caixote, barril e urna; interfaces `IDamageable` e `IResettable` |
+| Vetores de prefabs + escolha aleatória | `CombatRoom.SpawnGroup.variants` (2 variações por tipo de esqueleto) com pontos embaralhados; `RangedEnemy.arrowPrefabs`; `Destructible.debrisPrefabs/lootPrefabs`; `CeilingCollapseTrap.rockPrefabs` + `dropPoints`; `EnemyLoot.dropPrefabs`; efeitos de `Projectile` |
+| Spawn por funções | `CombatRoom.SpawnEnemy()`, `CeilingCollapseTrap.SpawnRock()`, `EnemyLoot.TryDrop()`, `Destructible.Break()`, `Projectile.SpawnEffects()` |
+| Tags e Layers | Tags `Enemy`, `Projectile`, `Weapon`, `Destructible` (+ as do Nível 1); Layers `Enemy`, `Projectile`, `Interactable` (+ `Ignore Raycast` no jogador). `CombatLayers.SetupCollisions` usa `Physics.IgnoreLayerCollision`; máscaras separadas para tiro, visão dos inimigos e câmera |
+| Partículas: impacto, explosão, poeira, pedrinhas, fumaça | `FX2_Poeira_de_Impacto`, `FX2_Explosao_do_Barril` + `FX_Explosion`, `FX2_Poeira_de_Osso`, `FX2_Poeira_dos_Espinhos`, `FX_Pebbles`, `FX2_Fumaca_do_Disparo`, `FX_Smoke`; ambiente: `FX2_Nevoa_Rasteira`, `FX2_Gotas`, `FX2_Almas`, `FX2_Brasas` |
+| Sons ambientes e efeitos | `dungeon_ambience` (loop), `music_level2` (loop) e 39 efeitos, todos sintetizados para o projeto |
+| Animações | Esqueletos: surgir, parado, andar, correr, atacar (faca, arco, machado), dano, morte. John: parado, andar, correr, pular, cair, empurrar, dano + camada dos braços |
+| Luzes Point, Area, Baked e Mixed | Point: tochas, lanterna do cinto de John (com sombra), olhos dos esqueletos. Mixed: candelabros, lustres, braseiro, focos das fendas no teto. Area (Rectangle, Baked): `Fenda_de_Luz` e `LuzDeArea_*`. Baked: luzes de preenchimento das salas. `LightingSettings` próprio, sondas de luz (`LightProbeGroup`) e geometria com UV2 para lightmap |
+| UI com textos e botões; reiniciar | HUD de combate + missão, avisos, título da sala; botões **Reiniciar sala** e **Reiniciar jogo** (pausa), **Voltar ao checkpoint** (derrota), **Próximo nível / Reiniciar jogo / Menu principal** (fim do nível) |
+| **70+ assets distintos** | `Docs/Inventario_Nivel2.md`, gerado com a contagem real (passa de 100: arquitetura, props, iluminação, armadilhas, armas, inimigos, efeitos, interface…) |

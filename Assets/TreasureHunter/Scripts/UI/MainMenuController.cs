@@ -5,13 +5,17 @@ using UnityEngine.UI;
 namespace TreasureHunter
 {
     /// <summary>
-    /// Menu principal: começa o Nível 1, mostra os controles e fecha o jogo.
+    /// Menu principal: começa o Nível 1 (ou direto o Nível 2), mostra os controles e fecha o jogo.
     /// </summary>
     public class MainMenuController : MonoBehaviour
     {
         /// <summary>Nome da cena do Nível 1.</summary>
         public string levelScene = "Level1";
+        /// <summary>Nome da cena do Nível 2 (botão "Nível 2").</summary>
+        public string level2Scene = "Level2";
         public Button playButton;
+        /// <summary>Botão que começa direto no Nível 2 (opcional).</summary>
+        public Button level2Button;
         public Button controlsButton;
         public Button quitButton;
         public Button closeControlsButton;
@@ -29,6 +33,7 @@ namespace TreasureHunter
             Cursor.visible = true;
 
             if (playButton != null) playButton.onClick.AddListener(Play);
+            if (level2Button != null) level2Button.onClick.AddListener(PlayLevel2);
             if (controlsButton != null) controlsButton.onClick.AddListener(() => ShowControls(true));
             if (closeControlsButton != null) closeControlsButton.onClick.AddListener(() => ShowControls(false));
             if (quitButton != null) quitButton.onClick.AddListener(Quit);
@@ -42,6 +47,15 @@ namespace TreasureHunter
         {
             Click();
             SceneManager.LoadScene(levelScene);
+        }
+
+        /// <summary>
+        /// Carrega a cena do Nível 2.
+        /// </summary>
+        public void PlayLevel2()
+        {
+            Click();
+            SceneManager.LoadScene(level2Scene);
         }
 
         /// <summary>

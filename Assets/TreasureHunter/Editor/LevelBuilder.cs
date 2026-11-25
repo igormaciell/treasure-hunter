@@ -51,6 +51,7 @@ namespace TreasureHunter.EditorTools
         public static void BuildEverything()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            bool rebuildLevel2 = System.IO.File.Exists(L2Core.Level2ScenePath);
             try
             {
                 Progress("Preparando pastas e tags", 0.02f);
@@ -80,14 +81,18 @@ namespace TreasureHunter.EditorTools
                 Progress("Cena do Nível 1", 0.65f);
                 BuildLevel1Scene();
 
-                EditorBuildSettings.scenes = new[]
-                {
-                    new EditorBuildSettingsScene(MainMenuScenePath, true),
-                    new EditorBuildSettingsScene(Level1ScenePath, true)
-                };
+                EditorBuildSettings.scenes = BuildScenes();
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
                 EditorSceneManager.OpenScene(Level1ScenePath);
+
+                // O Nível 2 reaproveita prefabs do Nível 1 (efeitos, itens, John): se ele já existia,
+                // é gerado de novo para continuar apontando para os assets recém-criados.
+                if (rebuildLevel2)
+                {
+                    Level2Builder.Build();
+                    EditorSceneManager.OpenScene(Level1ScenePath);
+                }
             }
             finally
             {
@@ -97,6 +102,23 @@ namespace TreasureHunter.EditorTools
                 "Nível 1 gerado com sucesso!\n\nCenas: Assets/TreasureHunter/Scenes (MainMenu e Level1).\n" +
                 "Inventário de assets: Assets/TreasureHunter/Docs/Inventario_Nivel1.md\n\n" +
                 "Abra a cena MainMenu e aperte Play.", "OK");
+        }
+
+        /// <summary>
+        /// Lista de cenas do build: menu e Nível 1, mais os Níveis 2 e 3 se já tiverem sido gerados
+        /// (regenerar o Nível 1 não remove os outros níveis do build).
+        /// </summary>
+        /// <returns>Cenas do build, na ordem.</returns>
+        public static EditorBuildSettingsScene[] BuildScenes()
+        {
+            List<EditorBuildSettingsScene> list = new List<EditorBuildSettingsScene>
+            {
+                new EditorBuildSettingsScene(MainMenuScenePath, true),
+                new EditorBuildSettingsScene(Level1ScenePath, true)
+            };
+            foreach (string extra in new[] { BuilderCore.ScenesPath + "/Level2.unity", BuilderCore.ScenesPath + "/Level3.unity" })
+                if (System.IO.File.Exists(extra)) list.Add(new EditorBuildSettingsScene(extra, true));
+            return list.ToArray();
         }
 
         /// <summary>

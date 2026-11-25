@@ -9,7 +9,7 @@ namespace TreasureHunter
     /// <summary>
     /// Controla toda a interface do Nível 1: HUD (corações, ferramenta, tesouros, missão, prompt),
     /// avisos (habilidade nova, artefato), popups de tutorial, falas de John, título das salas,
-    /// menu de pausa, tela de derrota, tela de nível concluído (com botão de reiniciar),
+    /// menu de pausa, tela de derrota, tela de nível concluído (com botões de reiniciar e de próximo nível),
     /// Diário de Habilidades e o escurecimento de tela.
     /// As referências são preenchidas pelo gerador do nível.
     /// </summary>
@@ -58,6 +58,8 @@ namespace TreasureHunter
         public Text completeSummary;
         public Button completeRestartButton;
         public Button completeMenuButton;
+        /// <summary>Botão "Próximo nível" (aparece só quando existe um próximo nível no build).</summary>
+        public Button completeNextButton;
 
         [Header("Diário de Habilidades")]
         public GameObject journalPanel;
@@ -89,6 +91,7 @@ namespace TreasureHunter
             Bind(gameOverMenuButton, () => GameManager.Instance.LoadMainMenu());
             Bind(completeRestartButton, () => GameManager.Instance.RestartLevel());
             Bind(completeMenuButton, () => GameManager.Instance.LoadMainMenu());
+            Bind(completeNextButton, () => GameManager.Instance.LoadNextLevel());
 
             SetActive(pausePanel, false);
             SetActive(gameOverPanel, false);
@@ -320,6 +323,8 @@ namespace TreasureHunter
         {
             if (completeTitle != null) completeTitle.text = title + "\nconcluído!";
             if (completeSummary != null) completeSummary.text = summary;
+            if (completeNextButton != null)
+                completeNextButton.gameObject.SetActive(GameManager.Instance != null && GameManager.Instance.HasNextLevel);
             SetActive(completePanel, true);
             HidePrompt();
         }

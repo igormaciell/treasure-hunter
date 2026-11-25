@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -16,10 +17,13 @@ namespace TreasureHunter.EditorTools
     {
         private static Font font;
         private static Sprite heartFull, heartEmpty, torchIcon;
-        private static readonly Color PanelColor = new Color(0.16f, 0.13f, 0.1f, 0.88f);
-        private static readonly Color BorderColor = new Color(0.78f, 0.62f, 0.3f, 1f);
-        private static readonly Color TextColor = new Color(0.96f, 0.91f, 0.78f);
-        private static readonly Color Accent = new Color(1f, 0.82f, 0.35f);
+        public static readonly Color PanelColor = new Color(0.16f, 0.13f, 0.1f, 0.88f);
+        public static readonly Color BorderColor = new Color(0.78f, 0.62f, 0.3f, 1f);
+        public static readonly Color TextColor = new Color(0.96f, 0.91f, 0.78f);
+        public static readonly Color Accent = new Color(1f, 0.82f, 0.35f);
+
+        /// <summary>Fonte usada pelos textos da interface.</summary>
+        public static Font UIFont => font;
 
         /// <summary>
         /// Carrega a fonte padrão e cria os sprites em pixel art da interface.
@@ -65,6 +69,32 @@ namespace TreasureHunter.EditorTools
                 "....B....",
                 "....B...."
             }, pal);
+        }
+
+        /// <summary>
+        /// Versão de Prepare() para os outros níveis: carrega a fonte e os sprites JÁ GERADOS pelo Nível 1
+        /// (não recria nada na pasta do Nível 1, então as referências da cena do Nível 1 continuam válidas).
+        /// </summary>
+        /// <returns>true se os sprites do Nível 1 foram encontrados.</returns>
+        public static bool PrepareShared()
+        {
+            font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            heartFull = LoadSprite("ui_heart_full");
+            heartEmpty = LoadSprite("ui_heart_empty");
+            torchIcon = LoadSprite("ui_torch");
+            return heartFull != null && heartEmpty != null;
+        }
+
+        /// <summary>
+        /// Carrega um sprite salvo como sub-asset de uma textura gerada pelo Nível 1.
+        /// </summary>
+        /// <param name="name">Nome da textura.</param>
+        /// <returns>O sprite ou nulo.</returns>
+        private static Sprite LoadSprite(string name)
+        {
+            foreach (Object o in AssetDatabase.LoadAllAssetsAtPath(BuilderCore.TexturesPath + "/" + name + ".asset"))
+                if (o is Sprite sp) return sp;
+            return null;
         }
 
         // ================================================================== Blocos básicos
@@ -372,8 +402,9 @@ namespace TreasureHunter.EditorTools
             RectTransform cs = Rect(cbox, "Resumo", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, new Vector2(0.5f, 0.5f));
             cs.offsetMin = new Vector2(50, 230); cs.offsetMax = new Vector2(-50, -170);
             ui.completeSummary = Label(cs, "Texto", "", 28, TextAnchor.UpperLeft, TextColor);
-            ui.completeRestartButton = Button(cbox, "Reiniciar jogo", new Vector2(0, -230));
-            ui.completeMenuButton = Button(cbox, "Menu principal", new Vector2(0, -320));
+            ui.completeNextButton = Button(cbox, "Próximo nível", new Vector2(0, -230));
+            ui.completeRestartButton = Button(cbox, "Reiniciar jogo", new Vector2(-215, -320), 400f);
+            ui.completeMenuButton = Button(cbox, "Menu principal", new Vector2(215, -320), 400f);
 
             ui.fadeImage = FullScreen(c, "Escurecimento", new Color(0, 0, 0, 0));
             EventSystem();
@@ -398,9 +429,10 @@ namespace TreasureHunter.EditorTools
             Label(sub, "Texto", "O Templo de Añang  —  Nível 1: A Entrada do Templo", 32, TextAnchor.MiddleLeft, TextColor);
 
             RectTransform col = Rect(c, "Botoes", new Vector2(0, 0.5f), new Vector2(0, 0.5f), new Vector2(330, -80), new Vector2(460, 400), new Vector2(0.5f, 0.5f));
-            menu.playButton = Button(col, "Jogar", new Vector2(0, 110));
-            menu.controlsButton = Button(col, "Controles", new Vector2(0, 20));
-            menu.quitButton = Button(col, "Sair", new Vector2(0, -70));
+            menu.playButton = Button(col, "Jogar", new Vector2(0, 150));
+            menu.level2Button = Button(col, "Nível 2", new Vector2(0, 60));
+            menu.controlsButton = Button(col, "Controles", new Vector2(0, -30));
+            menu.quitButton = Button(col, "Sair", new Vector2(0, -120));
 
             RectTransform credits = Rect(c, "Creditos", new Vector2(0, 0), new Vector2(0, 0), new Vector2(110, 30), new Vector2(1400, 60), new Vector2(0, 0));
             Label(credits, "Texto", "UVV · Ciência da Computação · Davi D'Ávila, Hugo Almeida, Igor Maciel, Pedro Souza · 2026", 22, TextAnchor.LowerLeft, new Color(1, 1, 1, 0.65f));
@@ -419,7 +451,9 @@ namespace TreasureHunter.EditorTools
                 "Andar contra um caixote — empurrar\n" +
                 "F / clique esquerdo — erguer a tocha\n" +
                 "Tab — Diário de Habilidades\n" +
-                "Esc — pausa (reiniciar sala ou jogo)", 30, TextAnchor.UpperLeft, TextColor);
+                "Esc — pausa (reiniciar sala ou jogo)\n" +
+                "Nível 2: clique esq. atirar · direito mirar · R recarregar\n" +
+                "V coronhada/faca · G pedra · 1/2 ou Q trocar arma", 26, TextAnchor.UpperLeft, TextColor);
             menu.closeControlsButton = Button(box, "Voltar", new Vector2(0, -290));
 
             EventSystem();

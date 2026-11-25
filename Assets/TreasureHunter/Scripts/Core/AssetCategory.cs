@@ -7,7 +7,7 @@ namespace TreasureHunter
     /// </summary>
     public enum AssetCategoryType
     {
-        Arquitetura, Vegetacao, Props, Tesouros, Mecanismos, Iluminacao, Armadilhas, Inscricoes, Personagem, Efeitos, Terreno
+        Arquitetura, Vegetacao, Props, Tesouros, Mecanismos, Iluminacao, Armadilhas, Inscricoes, Personagem, Efeitos, Terreno, Inimigos, Armas, Interface
     }
 
     /// <summary>

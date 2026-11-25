@@ -39,6 +39,8 @@ namespace TreasureHunter
         [Header("Nível")]
         public string levelName = "Nível 1 — A Entrada do Templo";
         public string mainMenuScene = "MainMenu";
+        /// <summary>Cena do próximo nível (vazio = não há próximo nível; o botão fica escondido).</summary>
+        public string nextLevelScene = "";
         public int totalArtifacts = 3;
         [TextArea] public string startObjective = "Encontre o templo escondido na floresta.";
 
@@ -220,6 +222,36 @@ namespace TreasureHunter
         {
             Time.timeScale = 1f;
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        /// <summary>
+        /// Indica se existe um próximo nível incluído no build.
+        /// </summary>
+        public bool HasNextLevel => !string.IsNullOrEmpty(nextLevelScene) && IsSceneInBuild(nextLevelScene);
+
+        /// <summary>
+        /// Carrega o próximo nível (botão "Próximo nível" da tela de nível concluído).
+        /// </summary>
+        public void LoadNextLevel()
+        {
+            if (!HasNextLevel) return;
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(nextLevelScene);
+        }
+
+        /// <summary>
+        /// Verifica se uma cena (pelo nome) está na lista de cenas do build.
+        /// </summary>
+        /// <param name="sceneName">Nome da cena, sem extensão.</param>
+        /// <returns>true se a cena pode ser carregada.</returns>
+        public static bool IsSceneInBuild(string sceneName)
+        {
+            for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+            {
+                string path = SceneUtility.GetScenePathByBuildIndex(i);
+                if (System.IO.Path.GetFileNameWithoutExtension(path) == sceneName) return true;
+            }
+            return false;
         }
 
         /// <summary>
